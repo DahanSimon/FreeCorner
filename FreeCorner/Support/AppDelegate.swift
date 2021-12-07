@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import Firebase
+import FirebaseDatabase
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -13,7 +15,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        FirebaseApp.configure()
+        let ref = Database.database().reference()
+        ref.removeValue()
+        FireBaseService().populateOffer(name: "Chair", description: "Nice Grey Chair", images: ["https://media.4rgos.it/i/Argos/9393732_R_Z001A?w=750&h=440&qlt=70", "https://media.4rgos.it/i/Argos/9393732_R_Z001A?w=750&h=440&qlt=70"], owner: "1", category: "furniture")
+        FireBaseService().populateUser(name: "Dahan Simon", phone: "0659272810", address: "84B avenue Pierre Mendes france 94880 Noiseau", offer: ["1","2"], email: "dahan.simon@hotmail.fr")
         return true
     }
 
