@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		6B36A384275FE1EC00A576E3 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6B36A383275FE1EC00A576E3 /* GoogleService-Info.plist */; };
 		6B36A38A276014EA00A576E3 /* FireBaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B36A389276014EA00A576E3 /* FireBaseService.swift */; };
+		6B64A74127611ED200B435B8 /* Offer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B64A74027611ED200B435B8 /* Offer.swift */; };
+		6B64A74327612AF500B435B8 /* OfferTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B64A74227612AF500B435B8 /* OfferTableViewCell.swift */; };
 		6BCE1B2D275FD605001AE7FD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BCE1B2C275FD605001AE7FD /* AppDelegate.swift */; };
 		6BCE1B2F275FD605001AE7FD /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BCE1B2E275FD605001AE7FD /* SceneDelegate.swift */; };
 		6BCE1B31275FD605001AE7FD /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BCE1B30275FD605001AE7FD /* ViewController.swift */; };
@@ -43,6 +45,8 @@
 		635FC109CCDAC3E650F1DD21 /* Pods_FreeCorner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FreeCorner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6B36A383275FE1EC00A576E3 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		6B36A389276014EA00A576E3 /* FireBaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireBaseService.swift; sourceTree = "<group>"; };
+		6B64A74027611ED200B435B8 /* Offer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Offer.swift; sourceTree = "<group>"; };
+		6B64A74227612AF500B435B8 /* OfferTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfferTableViewCell.swift; sourceTree = "<group>"; };
 		6BCE1B29275FD605001AE7FD /* FreeCorner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FreeCorner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6BCE1B2C275FD605001AE7FD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6BCE1B2E275FD605001AE7FD /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -97,6 +101,7 @@
 			isa = PBXGroup;
 			children = (
 				6B36A389276014EA00A576E3 /* FireBaseService.swift */,
+				6B64A74027611ED200B435B8 /* Offer.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -105,6 +110,7 @@
 			isa = PBXGroup;
 			children = (
 				6BCE1B32275FD605001AE7FD /* Main.storyboard */,
+				6B64A74227612AF500B435B8 /* OfferTableViewCell.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -365,10 +371,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6B64A74327612AF500B435B8 /* OfferTableViewCell.swift in Sources */,
 				6BCE1B31275FD605001AE7FD /* ViewController.swift in Sources */,
 				6BCE1B2D275FD605001AE7FD /* AppDelegate.swift in Sources */,
 				6B36A38A276014EA00A576E3 /* FireBaseService.swift in Sources */,
 				6BCE1B2F275FD605001AE7FD /* SceneDelegate.swift in Sources */,
+				6B64A74127611ED200B435B8 /* Offer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
