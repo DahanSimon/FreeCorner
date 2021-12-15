@@ -50,13 +50,10 @@ class Offer {
     }
 
     // MARK: Convert GroceryItem to AnyObject
-    func toAnyObject() -> Any {
-      return [
-        "name": name,
-        "description": desctiption,
-        "images": images,
-        "owner": owner,
-        "category": category
-      ]
-    }
+    
+}
+
+enum categories {
+    case smartphon
+    case furniture
 }

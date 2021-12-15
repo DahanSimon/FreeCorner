@@ -7,7 +7,25 @@
 		<key>FreeCorner.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>13</integer>
+			<integer>15</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>6BCE1B28275FD605001AE7FD</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>6BCE1B3E275FD607001AE7FD</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>6BCE1B48275FD607001AE7FD</key>
+		<dict>
+			<key>primary</key>
+			<true/>
 		</dict>
 	</dict>
 </dict>
