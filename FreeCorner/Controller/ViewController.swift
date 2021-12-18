@@ -19,14 +19,16 @@ class ViewController: UIViewController {
     var filteredItems: [Offer] = []
     var users: [User] = []
     var isFiltered: Bool = false
+    var selectedOfferIndex: Int = 0
     override func viewDidLoad() {
         super.viewDidLoad()
         filterButton.showsMenuAsPrimaryAction = true
-        filterButton.menu = UIMenu(children: [
-            UIAction(title: "smartphone", state: .off, handler: filterButtonTapped(_:)),
-            UIAction(title: "furniture",  state: .off, handler: filterButtonTapped(_:)),
-            UIAction(title: "other", state: .off, handler: filterButtonTapped(_:))
-        ])
+        var actionArray: [UIAction] = []
+        for category in Categories.allCases {
+            let action = UIAction(title: category.rawValue, state: .off, handler: filterButtonTapped(_:))
+            actionArray.append(action)
+        }
+        filterButton.menu = UIMenu(children: actionArray)
         tableView.rowHeight = 400
     }
     override func viewDidDisappear(_ animated: Bool) {
@@ -34,6 +36,13 @@ class ViewController: UIViewController {
         refObservers.forEach(offersRef.removeObserver(withHandle:))
         refObservers.forEach(usersRef.removeObserver(withHandle:))
         refObservers = []
+    }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "offerDetailsSegue"{
+            let reversedOffers:[Offer] = items.reversed()
+            let recipeVC = segue.destination as? OfferDetailsViewController
+            recipeVC?.selectedOffer = reversedOffers[selectedOfferIndex]
+        }
     }
     @IBAction func filterButtonTapped(_ sender: Any) {
         guard let filter = sender as? UIAction else {
@@ -54,7 +63,6 @@ class ViewController: UIViewController {
                 self.tableView.reloadData()
             }
         }
-        
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
@@ -93,23 +101,14 @@ class ViewController: UIViewController {
         })
         tableView.reloadData()
     }
-    
-    func toAnyObject(offer: Offer) -> [[String: Any]] {
-        var result: [[String: Any]] = [[:]]
-        var interResult: [String: Any] = [:]
-        interResult["name"] = offer.name
-        interResult["description"] = offer.desctiption
-        interResult["owner"] = offer.owner
-        result.append(interResult)
-        return result
-    }
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         tableView.frame = view.bounds
     }
+    
 }
 
-extension ViewController: UITableViewDataSource, UITableViewDelegate {
+extension ViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if isFiltered {
             return filteredItems.count
@@ -118,7 +117,7 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "RecipeCell", for: indexPath) as? OfferTableViewCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "OfferCell", for: indexPath) as? OfferTableViewCell else {
             return UITableViewCell()
         }
         var itemsList: [Offer] {
@@ -138,6 +137,12 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
     
 }
 
+extension ViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.selectedOfferIndex = indexPath.row
+        performSegue(withIdentifier: "offerDetailsSegue", sender: self)
+    }
+}
 extension ViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
@@ -145,24 +150,30 @@ extension ViewController: UITextFieldDelegate {
             return true
         }
         self.isFiltered = true
-        offersRef.queryOrdered(byChild: "name").queryEqual(toValue: searchedItem).observe(.value) { snapshot in
-            var filteredOffers: [Offer] = []
-            for child in snapshot.children {
-                if
-                    let snapshot = child as? DataSnapshot,
-                    let offer = Offer(snapshot: snapshot) {
-                    filteredOffers.append(offer)
-                }
+        var filteredItems: [Offer] = []
+        for item in items {
+            if item.name.capitalized.contains(searchedItem.capitalized) {
+                filteredItems.append(item)
             }
-            self.filteredItems = filteredOffers
+        }
+            if filteredItems.isEmpty {
+                presentAlert(message: "Sorry no offers were found.")
+                self.isFiltered = false
+            }
+            self.filteredItems = filteredItems
             if !self.users.isEmpty {
                 self.tableView.reloadData()
             }
-        }
         print(searchedItem)
         return true
     }
     
+    private func presentAlert(message: String) {
+        let alertVC = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        let action = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+        alertVC.addAction(action)
+        self.present(alertVC, animated: true, completion: nil)
+    }
     
     @IBAction func hideKeyboard(_ sender: UITapGestureRecognizer) {
         textField.resignFirstResponder()
@@ -170,7 +181,6 @@ extension ViewController: UITextFieldDelegate {
 }
 
 extension UIImageView {
-    
     // This method download an image from an URL
     func load(url: URL) {
         DispatchQueue.global().async { [weak self] in
