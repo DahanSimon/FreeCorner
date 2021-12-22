@@ -8,7 +8,6 @@
 import UIKit
 import FirebaseDatabase
 class ViewController: UIViewController {
-    
     @IBOutlet weak var textField: UITextField!
     @IBOutlet weak var filterButton: UIButton!
     @IBOutlet weak var tableView: UITableView!
@@ -31,6 +30,9 @@ class ViewController: UIViewController {
         filterButton.menu = UIMenu(children: actionArray)
         tableView.rowHeight = 400
     }
+    @objc func refresh(_ sender:AnyObject) {
+        tableView.reloadData()
+    }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(true)
         refObservers.forEach(offersRef.removeObserver(withHandle:))
@@ -39,9 +41,15 @@ class ViewController: UIViewController {
     }
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "offerDetailsSegue"{
-            let reversedOffers:[Offer] = items.reversed()
+            var reversedOffers: [Offer] {
+                if isFiltered {
+                    return filteredItems.reversed()
+                }
+                return items.reversed()
+            }
             let recipeVC = segue.destination as? OfferDetailsViewController
             recipeVC?.selectedOffer = reversedOffers[selectedOfferIndex]
+            recipeVC?.users = self.users
         }
     }
     @IBAction func filterButtonTapped(_ sender: Any) {
@@ -77,9 +85,6 @@ class ViewController: UIViewController {
                     }
                 }
                 self.items = newItems
-                if !self.users.isEmpty {
-                    self.tableView.reloadData()
-                }
             }
             self.refObservers.append(completed)
         })
@@ -105,33 +110,28 @@ class ViewController: UIViewController {
         super.viewDidLayoutSubviews()
         tableView.frame = view.bounds
     }
-    
 }
 
 extension ViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if isFiltered {
-            return filteredItems.count
-        }
-        return items.count
+        return getOffers().count
     }
-    
+    func getOffers() -> [Offer] {
+        if isFiltered {
+            return filteredItems.reversed()
+        }
+        return items.reversed()
+    }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "OfferCell", for: indexPath) as? OfferTableViewCell else {
             return UITableViewCell()
         }
-        var itemsList: [Offer] {
-            if isFiltered {
-                return filteredItems
-            }
-            return items
-        }
-        let reversedItems: [Offer] = itemsList.reversed()
+        let itemsList: [Offer]  = getOffers()
         var ownerLocation: [String: String] = ["Postal Code":""]
-        if let userIndex = Int(reversedItems[indexPath.row].owner) {
-            ownerLocation = users[userIndex].address
+        if let userIndex = Int(itemsList[indexPath.row].owner) {
+            ownerLocation = users[userIndex - 1].address
         }
-        cell.configure(name: reversedItems[indexPath.row].name, description: reversedItems[indexPath.row].desctiption, location: "Zipcode: \n" + ownerLocation["Postal Code"]!, imageUrl: URL(string: reversedItems[indexPath.row].images[0])!)
+        cell.configure(name: itemsList[indexPath.row].name, description: itemsList[indexPath.row].desctiption, location: "Zipcode: \n" + ownerLocation["Postal Code"]!, imageUrl: URL(string: itemsList[indexPath.row].images[0])!)
         return cell
     }
     
@@ -156,15 +156,14 @@ extension ViewController: UITextFieldDelegate {
                 filteredItems.append(item)
             }
         }
-            if filteredItems.isEmpty {
-                presentAlert(message: "Sorry no offers were found.")
-                self.isFiltered = false
-            }
-            self.filteredItems = filteredItems
-            if !self.users.isEmpty {
-                self.tableView.reloadData()
-            }
-        print(searchedItem)
+        if filteredItems.isEmpty {
+            presentAlert(message: "Sorry no offers were found.")
+            self.isFiltered = false
+        }
+        self.filteredItems = filteredItems
+        if !self.users.isEmpty {
+            self.tableView.reloadData()
+        }
         return true
     }
     
@@ -180,18 +179,4 @@ extension ViewController: UITextFieldDelegate {
     }
 }
 
-extension UIImageView {
-    // This method download an image from an URL
-    func load(url: URL) {
-        DispatchQueue.global().async { [weak self] in
-            if let data = try? Data(contentsOf: url) {
-                if let image = UIImage(data: data) {
-                    DispatchQueue.main.async {
-                        self?.image = image
-                    }
-                }
-            }
-        }
-    }
-}
 

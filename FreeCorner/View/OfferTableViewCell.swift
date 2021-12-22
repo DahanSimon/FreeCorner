@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 class ListCustomView: UIView {
     override func awakeFromNib() {
@@ -24,9 +25,11 @@ class OfferTableViewCell: UITableViewCell {
     @IBOutlet weak var offerDescription: UILabel!
     @IBOutlet weak var offerName: UILabel!
     @IBOutlet weak var offerLocation: UILabel!
-    
+    let activityIndicator = UIActivityIndicatorView()
+
     override func awakeFromNib() {
         super.awakeFromNib()
+//        offerPicture.isHidden = true
         self.offerListView.layer.cornerRadius = 10
         self.textLabel?.textAlignment = .center
         self.textLabel?.font = UIFont(name: "Montserrat", size: 18)
@@ -42,6 +45,10 @@ class OfferTableViewCell: UITableViewCell {
         offerDescription.text = description
         offerLocation.text = location
         offerName.text = name
-        offerPicture.load(url: imageUrl)
+        activityIndicator.frame = self.offerPicture.bounds
+        offerPicture.addSubview(activityIndicator)
+//        offerPicture.load(url: imageUrl, activyIndicator: activityIndicator, parentView: offerPicture)
+        offerPicture.kf.indicatorType = .activity
+        offerPicture.kf.setImage(with: imageUrl, placeholder: nil, options: nil)
     }
 }

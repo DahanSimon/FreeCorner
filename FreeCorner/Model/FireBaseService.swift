@@ -10,29 +10,35 @@ import FirebaseDatabase
 
 class FireBaseService {
     let ref = Database.database().reference()
-    
-    func populateOffer(name: String, description: String, images: [String],owner: String, category: String, callback: @escaping (Bool) -> Void) {
-        for i in 1...20 {
-            ref.getData { dataError, data in
-                self.ref.child("offers/\(i)/name").setValue(name)
-                self.ref.child("offers/\(i)/description").setValue(description)
-                self.ref.child("offers/\(i)/images").setValue(images)
-                self.ref.child("offers/\(i)/owner").setValue(owner)
-                self.ref.child("offers/\(i)/category").setValue(category)
+    let offersRef = Database.database().reference(withPath: "offers")
+    var refObservers: [DatabaseHandle] = []
+    var offers:[Offer] = []
+    func getOffers() {
+        offersRef.observe(.value, with: { snapshot in
+            let completed = self.offersRef.observe(.value) { snapshot in
+                var newItems: [Offer] = []
+                for child in snapshot.children {
+                    if
+                        let snapshot = child as? DataSnapshot,
+                        let offer = Offer(snapshot: snapshot) {
+                        newItems.append(offer)
+                    }
+                }
+                self.offers = newItems
             }
-        }
-        for i in 21...40 {
-            self.ref.child("offers/\(i)/name").setValue("phone")
-            self.ref.child("offers/\(i)/description").setValue("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries")
-            self.ref.child("offers/\(i)/images").setValue(["https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSXoePm8u-IAVSlg_r1H8XxiPa7nX_hMxYUFA&usqp=CAU","https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSXoePm8u-IAVSlg_r1H8XxiPa7nX_hMxYUFA&usqp=CAU"])
-            self.ref.child("offers/\(i)/owner").setValue("2")
-            self.ref.child("offers/\(i)/category").setValue(Categories.smartphone.rawValue)
-        }
-        callback(true)
+            self.refObservers.append(completed)
+        })
+    }
+    func populateOffer(id:Int, name: String, description: String, images: [String],owner: String, category: String) {
+            self.ref.child("offers/\(id)/name").setValue(name)
+            self.ref.child("offers/\(id)/description").setValue(description)
+            self.ref.child("offers/\(id)/images").setValue(images)
+            self.ref.child("offers/\(id)/owner").setValue(owner)
+            self.ref.child("offers/\(id)/category").setValue(category)
     }
     
     func populateUser(name: String, phone: String, address: [String: String], offer: [String], email: String) {
-        for i in 1...20 {
+        for i in 1...2 {
             ref.getData { dataError, data in
                 self.ref.child("users/\(i)/name").setValue(name)
                 self.ref.child("users/\(i)/phone").setValue(phone)

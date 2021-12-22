@@ -6,13 +6,18 @@
 //
 
 import UIKit
-
+import Kingfisher
 class CustomCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var offerPicture: UIImageView!
+    let activityIndicator = UIActivityIndicatorView()
     
     func configure(imageUrl: String){
+        activityIndicator.frame = self.offerPicture.bounds
+        offerPicture.addSubview(activityIndicator)
+//        offerPicture.isHidden = true
         if let url = URL(string: imageUrl) {
-            self.offerPicture.load(url: url)
+            offerPicture.kf.indicatorType = .activity
+            offerPicture.kf.setImage(with: url, placeholder: nil, options: nil)
         }
     }
 }
