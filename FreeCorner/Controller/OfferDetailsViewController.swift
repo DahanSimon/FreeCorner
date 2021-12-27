@@ -32,7 +32,7 @@ class OfferDetailsViewController: UIViewController, UICollectionViewDelegate, UI
         composeVC.messageComposeDelegate = self
         
         // Configure the fields of the interface.
-        composeVC.recipients = [users![Int(self.selectedOffer!.owner)! - 1].phone]
+        composeVC.recipients = [users![self.selectedOffer!.owner]!.phone]
         composeVC.body = "Hey! Your product on FreeKorner is still available ? \nThank you !"
         
         // Present the view controller modally.
@@ -41,10 +41,10 @@ class OfferDetailsViewController: UIViewController, UICollectionViewDelegate, UI
         }
     }
     @IBAction func phoneButtonTapped(_ sender: Any) {
-        guard let users = users, let selectedOffer = self.selectedOffer, let ownerId = Int(selectedOffer.owner) else {
+        guard let users = users, let selectedOffer = self.selectedOffer else {
             return
         }
-        let phoneNumber = users[ownerId - 1].phone
+        let phoneNumber = users[selectedOffer.owner]!.phone
         if !phoneNumber.isEmpty {
             if let url = URL(string: "tel://" + phoneNumber) {
                 if UIApplication.shared.canOpenURL(url) {
@@ -62,11 +62,11 @@ class OfferDetailsViewController: UIViewController, UICollectionViewDelegate, UI
     }
     
     var selectedOffer: Offer?
-    var users: [User]?
+    var users: [String:User]?
     override func viewDidLoad() {
         super.viewDidLoad()
         self.descriptionLabel.text = selectedOffer?.desctiption
-        let address = users?[Int(self.selectedOffer!.owner)! - 1].address["Postal Code"]
+        let address = users?[self.selectedOffer!.owner]!.address["Postal Code"]
         
         let geoCoder = CLGeocoder()
         geoCoder.geocodeAddressString(address!) { (placemarks, error) in
@@ -80,7 +80,7 @@ class OfferDetailsViewController: UIViewController, UICollectionViewDelegate, UI
             let region = MKCoordinateRegion( center: location.coordinate, latitudinalMeters: CLLocationDistance(exactly: 5000)!, longitudinalMeters: CLLocationDistance(exactly: 5000)!)
             self.mapView.setRegion(self.mapView.regionThatFits(region), animated: true)
             let artwork = Artwork(
-                title: self.users?[Int(self.selectedOffer!.owner)! - 1].address["City Name"],
+                title: self.users?[self.selectedOffer!.owner]!.address["City Name"],
                 locationName: "",
                 discipline: "",
                 coordinate: CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude))

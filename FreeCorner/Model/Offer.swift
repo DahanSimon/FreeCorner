@@ -15,7 +15,7 @@ class Offer {
     var images: [String]
     var owner: String
     var category: String
-
+    
 
     // MARK: Initialize with Raw Data
     init(name: String, description: String, images: [String], owner: String, category: String, key: String = "") {

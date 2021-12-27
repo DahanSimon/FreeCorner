@@ -9,6 +9,11 @@
 /* Begin PBXBuildFile section */
 		6B192553276BF506006EF640 /* CustomCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B192552276BF506006EF640 /* CustomCollectionViewCell.swift */; };
 		6B36A38A276014EA00A576E3 /* FireBaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B36A389276014EA00A576E3 /* FireBaseService.swift */; };
+		6B5E240A2773C11A00C34DC9 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B5E24092773C11A00C34DC9 /* SignUpViewController.swift */; };
+		6B5E240C2774BCEB00C34DC9 /* SignInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B5E240B2774BCEB00C34DC9 /* SignInViewController.swift */; };
+		6B5E240E2775F51700C34DC9 /* MyOffersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B5E240D2775F51700C34DC9 /* MyOffersViewController.swift */; };
+		6B5E241027760F8D00C34DC9 /* UsersOfferTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B5E240F27760F8D00C34DC9 /* UsersOfferTableViewCell.swift */; };
+		6B5E24122777A55D00C34DC9 /* UpdateOfferViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B5E24112777A55D00C34DC9 /* UpdateOfferViewController.swift */; };
 		6B64A74127611ED200B435B8 /* Offer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B64A74027611ED200B435B8 /* Offer.swift */; };
 		6B64A74327612AF500B435B8 /* OfferTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B64A74227612AF500B435B8 /* OfferTableViewCell.swift */; };
 		6B6736BB276FAAF600B7BA38 /* PostOfferViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B6736BA276FAAF600B7BA38 /* PostOfferViewController.swift */; };
@@ -26,6 +31,8 @@
 		6BCE1B44275FD607001AE7FD /* FreeCornerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BCE1B43275FD607001AE7FD /* FreeCornerTests.swift */; };
 		6BCE1B4E275FD607001AE7FD /* FreeCornerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BCE1B4D275FD607001AE7FD /* FreeCornerUITests.swift */; };
 		6BCE1B50275FD607001AE7FD /* FreeCornerUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BCE1B4F275FD607001AE7FD /* FreeCornerUITestsLaunchTests.swift */; };
+		6BDA544B2777E12E001C90E2 /* PhotosListCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BDA544A2777E12E001C90E2 /* PhotosListCollectionViewCell.swift */; };
+		6BDA544D2777EBB8001C90E2 /* PhotosListCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6BDA544C2777EBB8001C90E2 /* PhotosListCollectionViewCell.xib */; };
 		F328BADDB11021BB94F5DE7C /* Pods_FreeCorner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 635FC109CCDAC3E650F1DD21 /* Pods_FreeCorner.framework */; };
 /* End PBXBuildFile section */
 
@@ -51,6 +58,11 @@
 		635FC109CCDAC3E650F1DD21 /* Pods_FreeCorner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FreeCorner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6B192552276BF506006EF640 /* CustomCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCollectionViewCell.swift; sourceTree = "<group>"; };
 		6B36A389276014EA00A576E3 /* FireBaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireBaseService.swift; sourceTree = "<group>"; };
+		6B5E24092773C11A00C34DC9 /* SignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
+		6B5E240B2774BCEB00C34DC9 /* SignInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
+		6B5E240D2775F51700C34DC9 /* MyOffersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyOffersViewController.swift; sourceTree = "<group>"; };
+		6B5E240F27760F8D00C34DC9 /* UsersOfferTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersOfferTableViewCell.swift; sourceTree = "<group>"; };
+		6B5E24112777A55D00C34DC9 /* UpdateOfferViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateOfferViewController.swift; sourceTree = "<group>"; };
 		6B64A74027611ED200B435B8 /* Offer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Offer.swift; sourceTree = "<group>"; };
 		6B64A74227612AF500B435B8 /* OfferTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfferTableViewCell.swift; sourceTree = "<group>"; };
 		6B6736BA276FAAF600B7BA38 /* PostOfferViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostOfferViewController.swift; sourceTree = "<group>"; };
@@ -72,6 +84,8 @@
 		6BCE1B49275FD607001AE7FD /* FreeCornerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FreeCornerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6BCE1B4D275FD607001AE7FD /* FreeCornerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreeCornerUITests.swift; sourceTree = "<group>"; };
 		6BCE1B4F275FD607001AE7FD /* FreeCornerUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreeCornerUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		6BDA544A2777E12E001C90E2 /* PhotosListCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosListCollectionViewCell.swift; sourceTree = "<group>"; };
+		6BDA544C2777EBB8001C90E2 /* PhotosListCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PhotosListCollectionViewCell.xib; sourceTree = "<group>"; };
 		D1DC9FC1E3273FCD7DF7CBF3 /* Pods-FreeCorner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FreeCorner.release.xcconfig"; path = "Target Support Files/Pods-FreeCorner/Pods-FreeCorner.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -125,7 +139,10 @@
 				6BCE1B32275FD605001AE7FD /* Main.storyboard */,
 				6B64A74227612AF500B435B8 /* OfferTableViewCell.swift */,
 				6B192552276BF506006EF640 /* CustomCollectionViewCell.swift */,
+				6BDA544A2777E12E001C90E2 /* PhotosListCollectionViewCell.swift */,
 				6B6736C02770CD4400B7BA38 /* Artwork.swift */,
+				6B5E240F27760F8D00C34DC9 /* UsersOfferTableViewCell.swift */,
+				6BDA544C2777EBB8001C90E2 /* PhotosListCollectionViewCell.xib */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -137,6 +154,10 @@
 				6B7EF7E8276BA89600176E79 /* OfferDetailsViewController.swift */,
 				6B6736BA276FAAF600B7BA38 /* PostOfferViewController.swift */,
 				6B6736BE276FCEA100B7BA38 /* SuccessViewController.swift */,
+				6B5E24092773C11A00C34DC9 /* SignUpViewController.swift */,
+				6B5E240B2774BCEB00C34DC9 /* SignInViewController.swift */,
+				6B5E240D2775F51700C34DC9 /* MyOffersViewController.swift */,
+				6B5E24112777A55D00C34DC9 /* UpdateOfferViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -322,6 +343,7 @@
 				6BCE1B39275FD607001AE7FD /* LaunchScreen.storyboard in Resources */,
 				6B6736BD276FBA6300B7BA38 /* GoogleService-Info.plist in Resources */,
 				6BCE1B36275FD607001AE7FD /* Assets.xcassets in Resources */,
+				6BDA544D2777EBB8001C90E2 /* PhotosListCollectionViewCell.xib in Resources */,
 				6BCE1B34275FD605001AE7FD /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -389,18 +411,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6B5E240C2774BCEB00C34DC9 /* SignInViewController.swift in Sources */,
 				6B64A74327612AF500B435B8 /* OfferTableViewCell.swift in Sources */,
 				6B192553276BF506006EF640 /* CustomCollectionViewCell.swift in Sources */,
 				6BCE1B31275FD605001AE7FD /* ViewController.swift in Sources */,
 				6B6736BF276FCEA100B7BA38 /* SuccessViewController.swift in Sources */,
 				6BCE1B2D275FD605001AE7FD /* AppDelegate.swift in Sources */,
 				6B36A38A276014EA00A576E3 /* FireBaseService.swift in Sources */,
+				6BDA544B2777E12E001C90E2 /* PhotosListCollectionViewCell.swift in Sources */,
 				6B7EF7E9276BA89600176E79 /* OfferDetailsViewController.swift in Sources */,
 				6BCE1B2F275FD605001AE7FD /* SceneDelegate.swift in Sources */,
 				6B64A74127611ED200B435B8 /* Offer.swift in Sources */,
+				6B5E24122777A55D00C34DC9 /* UpdateOfferViewController.swift in Sources */,
+				6B5E240E2775F51700C34DC9 /* MyOffersViewController.swift in Sources */,
 				6BCBAD8D2768BBE200DCBE5B /* User.swift in Sources */,
 				6B6736C12770CD4400B7BA38 /* Artwork.swift in Sources */,
+				6B5E240A2773C11A00C34DC9 /* SignUpViewController.swift in Sources */,
 				6B6736BB276FAAF600B7BA38 /* PostOfferViewController.swift in Sources */,
+				6B5E241027760F8D00C34DC9 /* UsersOfferTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

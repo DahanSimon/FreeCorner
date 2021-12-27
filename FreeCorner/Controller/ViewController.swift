@@ -7,6 +7,7 @@
 
 import UIKit
 import FirebaseDatabase
+import FirebaseAuth
 class ViewController: UIViewController {
     @IBOutlet weak var textField: UITextField!
     @IBOutlet weak var filterButton: UIButton!
@@ -16,10 +17,11 @@ class ViewController: UIViewController {
     var refObservers: [DatabaseHandle] = []
     var items: [Offer] = []
     var filteredItems: [Offer] = []
-    var users: [User] = []
+    var users: [String:User] = [:]
     var isFiltered: Bool = false
     var selectedOfferIndex: Int = 0
     override func viewDidLoad() {
+        
         super.viewDidLoad()
         filterButton.showsMenuAsPrimaryAction = true
         var actionArray: [UIAction] = []
@@ -72,6 +74,9 @@ class ViewController: UIViewController {
             }
         }
     }
+    @IBAction func logOut(_ sender: UIButton) {
+        try? Auth.auth().signOut()
+    }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         offersRef.observe(.value, with: { snapshot in
@@ -90,13 +95,12 @@ class ViewController: UIViewController {
         })
         usersRef.observe(.value, with: { snapshot in
             let completed = self.usersRef.observe(.value) { snapshot in
-                
-                var newUsers: [User] = []
+                var newUsers: [String:User] = [:]
                 for child in snapshot.children {
                     if
                         let snapshot = child as? DataSnapshot,
                         let user = User(snapshot: snapshot) {
-                        newUsers.append(user)
+                        newUsers[user.key] = user
                     }
                 }
                 self.users = newUsers
@@ -120,7 +124,7 @@ extension ViewController: UITableViewDataSource {
         if isFiltered {
             return filteredItems.reversed()
         }
-        return items.reversed()
+        return FireBaseService.offers.reversed()
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "OfferCell", for: indexPath) as? OfferTableViewCell else {
@@ -128,10 +132,10 @@ extension ViewController: UITableViewDataSource {
         }
         let itemsList: [Offer]  = getOffers()
         var ownerLocation: [String: String] = ["Postal Code":""]
-        if let userIndex = Int(itemsList[indexPath.row].owner) {
-            ownerLocation = users[userIndex - 1].address
-        }
+        let userIndex = itemsList[indexPath.row].owner
+        ownerLocation = users[userIndex]!.address
         cell.configure(name: itemsList[indexPath.row].name, description: itemsList[indexPath.row].desctiption, location: "Zipcode: \n" + ownerLocation["Postal Code"]!, imageUrl: URL(string: itemsList[indexPath.row].images[0])!)
+        print(FireBaseService.offers)
         return cell
     }
     

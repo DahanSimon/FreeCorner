@@ -8,12 +8,16 @@
 import UIKit
 import FirebaseStorage
 import Firebase
+import FirebaseAuth
 import OpalImagePicker
 import Photos
 
 class PostOfferViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate,UITextFieldDelegate {
-    var offers: [Offer] = []
+//    let user = Auth.auth().currentUser
+    var offers: [String: Offer] = [:]
+    var usersOffers: [String: String]? = [:]
     let offersRef = Database.database().reference(withPath: "offers")
+    let usersRef = Database.database().reference(withPath: "users")
     var refObservers: [DatabaseHandle] = []
     var offerName: String?
     var offerDescription: String?
@@ -32,6 +36,7 @@ class PostOfferViewController: UIViewController, UIImagePickerControllerDelegate
     @IBAction func uploadImage(_ sender: Any) {
         imagesUrl = []
         offerImages = []
+        photoListLabel.text = ""
         let picker = OpalImagePickerController()
         var images: [UIImage] = []
         presentOpalImagePickerController(picker, animated: true) { assets in
@@ -109,17 +114,26 @@ class PostOfferViewController: UIViewController, UIImagePickerControllerDelegate
         alertController.popoverPresentationController?.sourceRect = view.frame
         return alertController
     }
-    
+    override func viewDidAppear(_ animated: Bool) {
+        if Auth.auth().currentUser == nil {
+            performSegue(withIdentifier: "signUpSegue", sender: self)
+        }
+    }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
+//        try? Auth.auth().signOut()
         offersRef.observe(.value, with: { snapshot in
             let completed = self.offersRef.observe(.value) { snapshot in
-                var newItems: [Offer] = []
+                var newItems: [String: Offer] = [:]
                 for child in snapshot.children {
                     if
                         let snapshot = child as? DataSnapshot,
                         let offer = Offer(snapshot: snapshot) {
-                        newItems.append(offer)
+                        newItems[offer.key] = offer
+                        if offer.owner == Auth.auth().currentUser?.uid {
+                            self.usersOffers?[offer.key] = offer.name
+                            self.usersRef.child("\(Auth.auth().currentUser!.uid)/offers").setValue(self.usersOffers)
+                        }
                     }
                 }
                 self.offers = newItems
@@ -155,11 +169,23 @@ class PostOfferViewController: UIViewController, UIImagePickerControllerDelegate
         }
     }
     @IBAction func sendOfferButtonTapped(_ sender: Any) {
-        guard let name = nameTextField.text, let description = descriptionTextField.text else {
+//        let user = Auth.auth().currentUser
+        guard let user = Auth.auth().currentUser?.uid, let name = nameTextField.text, let description = descriptionTextField.text else {
             return
         }
         let category = Categories.allCases[categoryPickerView.selectedRow(inComponent: 0)]
-        FireBaseService().populateOffer(id: offers.count + 1, name: name, description: description, images: imagesUrl, owner: owner, category: category.rawValue)
+        let ids = offers.keys
+        var id: String {
+            var id1: String = "0"
+            for key in ids {
+                if key > id1 {
+                    id1 = key
+                }
+            }
+            return id1
+        }
+        FireBaseService().populateOffer(id: Int(id)! + 1, name: name, description: description, images: imagesUrl, owner: user, category: category.rawValue)
+        
         reset()
     }
     func reset() {

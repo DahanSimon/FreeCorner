@@ -7,13 +7,15 @@
 
 import Foundation
 import FirebaseDatabase
-
+import FirebaseAuth
 class FireBaseService {
     let ref = Database.database().reference()
-    let offersRef = Database.database().reference(withPath: "offers")
-    var refObservers: [DatabaseHandle] = []
-    var offers:[Offer] = []
-    func getOffers() {
+    static let offersRef = Database.database().reference(withPath: "offers")
+    let userRef = Database.database().reference(withPath: "users")
+    static var refObservers: [DatabaseHandle] = []
+    static var offers:[Offer] = []
+    static func getOffers() -> [Offer] {
+        var offersList: [Offer] = []
         offersRef.observe(.value, with: { snapshot in
             let completed = self.offersRef.observe(.value) { snapshot in
                 var newItems: [Offer] = []
@@ -24,10 +26,11 @@ class FireBaseService {
                         newItems.append(offer)
                     }
                 }
-                self.offers = newItems
+                FireBaseService.offers = newItems
             }
             self.refObservers.append(completed)
         })
+        return offersList
     }
     func populateOffer(id:Int, name: String, description: String, images: [String],owner: String, category: String) {
             self.ref.child("offers/\(id)/name").setValue(name)
@@ -37,15 +40,16 @@ class FireBaseService {
             self.ref.child("offers/\(id)/category").setValue(category)
     }
     
-    func populateUser(name: String, phone: String, address: [String: String], offer: [String], email: String) {
-        for i in 1...2 {
+    func populateUser(id: String,name: String, phone: String, address: [String: String], offer: [String]?, email: String) {
             ref.getData { dataError, data in
-                self.ref.child("users/\(i)/name").setValue(name)
-                self.ref.child("users/\(i)/phone").setValue(phone)
-                self.ref.child("users/\(i)/address").setValue(address)
-                self.ref.child("users/\(i)/offer").setValue(offer)
-                self.ref.child("users/\(i)/email").setValue(email)
+                self.ref.child("users/\(id)/name").setValue(name)
+                self.ref.child("users/\(id)/phone").setValue(phone)
+                self.ref.child("users/\(id)/address").setValue(address)
+                self.ref.child("users/\(id)/offer").setValue(offer)
+                self.ref.child("users/\(id)/email").setValue(email)
             }
-        }
+    }
+    func deleteImage(offersId: String, imageId: String) {
+        FireBaseService.offersRef.child(offersId).child("images").child(imageId).removeValue()
     }
 }
