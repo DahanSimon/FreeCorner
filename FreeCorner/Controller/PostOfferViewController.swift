@@ -13,7 +13,7 @@ import OpalImagePicker
 import Photos
 
 class PostOfferViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate,UITextFieldDelegate {
-//    let user = Auth.auth().currentUser
+    //    let user = Auth.auth().currentUser
     var offers: [String: Offer] = [:]
     var usersOffers: [String: String]? = [:]
     let offersRef = Database.database().reference(withPath: "offers")
@@ -47,7 +47,7 @@ class PostOfferViewController: UIViewController, UIImagePickerControllerDelegate
                 self.offerImages = images
                 print(images)
                 for i in 0..<self.offerImages.count {
-                    self.sendData(image: self.offerImages[i], index: i) 
+                    self.sendData(image: self.offerImages[i], index: i)
                 }
                 
                 self.sendOfferButton.isHidden = true
@@ -56,7 +56,7 @@ class PostOfferViewController: UIViewController, UIImagePickerControllerDelegate
         } cancel: {
             print("cancel")
         }
-
+        
     }
     func sendData(image: UIImage, index: Int) {
         guard let imageData = image.pngData() else {
@@ -82,27 +82,27 @@ class PostOfferViewController: UIViewController, UIImagePickerControllerDelegate
         
     }
     func getAssetThumbnail(asset: PHAsset, size: CGFloat) -> UIImage {
-            let retinaScale = UIScreen.main.scale
-            let retinaSquare = CGSize(width: size * retinaScale, height: size * retinaScale)
-            let cropSizeLength = min(asset.pixelWidth, asset.pixelHeight)
-            let square = CGRect(x: 0, y: 0, width: CGFloat(cropSizeLength), height: CGFloat(cropSizeLength))
-            let cropRect = square.applying(CGAffineTransform(scaleX: 1.0/CGFloat(asset.pixelWidth), y: 1.0/CGFloat(asset.pixelHeight)))
-            
-            let manager = PHImageManager.default()
-            let options = PHImageRequestOptions()
-            var thumbnail = UIImage()
-            
-            options.isSynchronous = true
-            options.deliveryMode = .highQualityFormat
-            options.resizeMode = .exact
-            
-            options.normalizedCropRect = cropRect
-            
-            manager.requestImage(for: asset, targetSize: retinaSquare, contentMode: .aspectFit, options: options, resultHandler: {(result, info)->Void in
-                thumbnail = result!
-            })
-            return thumbnail
-        }
+        let retinaScale = UIScreen.main.scale
+        let retinaSquare = CGSize(width: size * retinaScale, height: size * retinaScale)
+        let cropSizeLength = min(asset.pixelWidth, asset.pixelHeight)
+        let square = CGRect(x: 0, y: 0, width: CGFloat(cropSizeLength), height: CGFloat(cropSizeLength))
+        let cropRect = square.applying(CGAffineTransform(scaleX: 1.0/CGFloat(asset.pixelWidth), y: 1.0/CGFloat(asset.pixelHeight)))
+        
+        let manager = PHImageManager.default()
+        let options = PHImageRequestOptions()
+        var thumbnail = UIImage()
+        
+        options.isSynchronous = true
+        options.deliveryMode = .highQualityFormat
+        options.resizeMode = .exact
+        
+        options.normalizedCropRect = cropRect
+        
+        manager.requestImage(for: asset, targetSize: retinaSquare, contentMode: .aspectFit, options: options, resultHandler: {(result, info)->Void in
+            thumbnail = result!
+        })
+        return thumbnail
+    }
     func showAlert(Title : String!, Message : String!)  -> UIAlertController {
         let alertController : UIAlertController = UIAlertController(title: Title, message: Message, preferredStyle: .alert)
         let okAction : UIAlertAction = UIAlertAction(title: "Ok", style: .default) { (alert) in
@@ -121,7 +121,7 @@ class PostOfferViewController: UIViewController, UIImagePickerControllerDelegate
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-//        try? Auth.auth().signOut()
+        //        try? Auth.auth().signOut()
         offersRef.observe(.value, with: { snapshot in
             let completed = self.offersRef.observe(.value) { snapshot in
                 var newItems: [String: Offer] = [:]
@@ -169,7 +169,7 @@ class PostOfferViewController: UIViewController, UIImagePickerControllerDelegate
         }
     }
     @IBAction func sendOfferButtonTapped(_ sender: Any) {
-//        let user = Auth.auth().currentUser
+        //        let user = Auth.auth().currentUser
         guard let user = Auth.auth().currentUser?.uid, let name = nameTextField.text, let description = descriptionTextField.text else {
             return
         }

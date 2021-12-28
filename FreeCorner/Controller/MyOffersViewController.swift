@@ -8,7 +8,13 @@
 import UIKit
 import FirebaseAuth
 import FirebaseDatabase
-class MyOffersViewController: UIViewController {
+class MyOffersViewController: UIViewController, UpdateOfferDelegate {
+    func didUpdateOffer(name: String, id: Int, description: String, images: [String], owner: String, category: String) {
+        FireBaseService().populateOffer(id: id, name: name, description: description, images: images, owner: owner, category: category)
+        usersOffers[String(id)] = Offer(name: name, description: description, images: images, owner: owner, category: category, key: String(id))
+        tableView.reloadData()
+    }
+    
     @IBOutlet weak var tableView: UITableView!
     
     var usersOffers: [String: Offer] = [:]
@@ -21,6 +27,10 @@ class MyOffersViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.rowHeight = 70
+        
+        offerRef.observe(.childChanged) { _ in
+            self.tableView.reloadData()
+        }
         userRef.child(userId).child("offers").observe(.childAdded) { snapshot in
             self.usersOffersIds.append(snapshot.key)
             self.tableView.reloadData()
@@ -78,6 +88,7 @@ extension MyOffersViewController: UITableViewDelegate, UITableViewDataSource {
             let destinationVC = segue.destination as? UpdateOfferViewController
             destinationVC?.selectedOffer = selectedOffer
             destinationVC?.usersOffersIds = usersOffersIds
+            destinationVC?.updateOfferDelegate = self
         }
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

@@ -18,7 +18,7 @@ class Offer {
     
 
     // MARK: Initialize with Raw Data
-    init(name: String, description: String, images: [String], owner: String, category: String, key: String = "") {
+    init(name: String, description: String, images: [String], owner: String, category: String, key: String) {
         self.ref = nil
         self.name = name
         self.desctiption = description

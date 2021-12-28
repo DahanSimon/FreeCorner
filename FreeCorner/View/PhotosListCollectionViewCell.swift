@@ -17,6 +17,9 @@ class PhotosListCollectionViewCell: UICollectionViewCell {
     func configure(imageUrl: String, index: Int, offersId: String){
         self.index = index
         self.offersId = offersId
+        addImageButton.isHidden = true
+        offerPicture.isHidden = false
+        button.isHidden = false
         activityIndicator.frame = self.offerPicture.bounds
         offerPicture.addSubview(activityIndicator)
 //        offerPicture.isHidden = true

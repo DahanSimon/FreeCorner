@@ -31,21 +31,24 @@ class SignUpViewController: UIViewController,UITextFieldDelegate {
     }
     @IBAction func signUpButtonTapped(_ sender: UIButton) {
         guard let email = emailTextField.text, let password = passwordTextField.text, let firstName = firstNameTextField.text, let lastName = lastNameTextField.text, let phoneNumber = phoneNumberTextField.text, let streetNumber = streetNumberTextField.text, let streetName = streetNameTextField.text, let zipCode = zipCodeTextField.text, let cityName = cityNameTextField.text else {
-            print("Error while signup")
+            presentAlert(title: "Oups", message: "Something is wrong with your entries !")
             return
         }
         Auth.auth().createUser(withEmail: email, password: password) { result, error in
+            if let errorDescription = error?.localizedDescription {
+                self.presentAlert(title: "Oups", message: errorDescription)
+                return
+            }
             guard let id = result?.user.uid else {
-                print(error.debugDescription)
                 return
             }
             FireBaseService().populateUser(id: id, name: firstName + " " + lastName, phone: phoneNumber, address: ["Road Name": streetNumber + " " + streetName,"Postal Code": zipCode,"City Name": cityName], offer: nil, email: email)
-//            self.usersRef.child("users").child(id).setValue(["name": firstName + " " + lastName,"phone": phoneNumber,"address": ["Road Name": streetNumber + " " + streetName,"Postal Code": zipCode,"City Name": cityName]])
         }
-        self.dismiss(animated: true, completion: nil)
+        if Auth.auth().currentUser != nil {
+            self.dismiss(animated: true, completion: nil)
+        }
     }
     @IBAction func signInButtonTapped(_ sender: Any) {
-//        self.dismiss(animated: true, completion: nil)
         let signInVC = SignInViewController()
         signInVC.modalPresentationStyle = .fullScreen
         present(signInVC, animated: true, completion: nil)
@@ -54,5 +57,12 @@ class SignUpViewController: UIViewController,UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
+    }
+    
+    private func presentAlert(title: String,message: String) {
+        let alertVC = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let action = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+        alertVC.addAction(action)
+        self.present(alertVC, animated: true, completion: nil)
     }
 }

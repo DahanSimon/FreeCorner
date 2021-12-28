@@ -11,11 +11,11 @@ import FirebaseAuth
 class FireBaseService {
     let ref = Database.database().reference()
     static let offersRef = Database.database().reference(withPath: "offers")
-    let userRef = Database.database().reference(withPath: "users")
+    static let userRef = Database.database().reference(withPath: "users")
     static var refObservers: [DatabaseHandle] = []
     static var offers:[Offer] = []
-    static func getOffers() -> [Offer] {
-        var offersList: [Offer] = []
+    static var users:[String: User] = [:]
+    static func getOffers() {
         offersRef.observe(.value, with: { snapshot in
             let completed = self.offersRef.observe(.value) { snapshot in
                 var newItems: [Offer] = []
@@ -30,7 +30,22 @@ class FireBaseService {
             }
             self.refObservers.append(completed)
         })
-        return offersList
+    }
+    static func getUsers() {
+        userRef.observe(.value, with: { snapshot in
+            let completed = userRef.observe(.value) { snapshot in
+                var newItems: [String: User] = [:]
+                for child in snapshot.children {
+                    if
+                        let snapshot = child as? DataSnapshot,
+                        let user = User(snapshot: snapshot) {
+                        newItems[user.key] = user
+                    }
+                }
+                FireBaseService.users = newItems
+            }
+            self.refObservers.append(completed)
+        })
     }
     func populateOffer(id:Int, name: String, description: String, images: [String],owner: String, category: String) {
             self.ref.child("offers/\(id)/name").setValue(name)

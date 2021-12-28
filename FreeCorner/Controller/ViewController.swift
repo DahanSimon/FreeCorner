@@ -15,13 +15,11 @@ class ViewController: UIViewController {
     let offersRef = Database.database().reference(withPath: "offers")
     let usersRef = Database.database().reference(withPath: "users")
     var refObservers: [DatabaseHandle] = []
-    var items: [Offer] = []
     var filteredItems: [Offer] = []
     var users: [String:User] = [:]
     var isFiltered: Bool = false
     var selectedOfferIndex: Int = 0
     override func viewDidLoad() {
-        
         super.viewDidLoad()
         filterButton.showsMenuAsPrimaryAction = true
         var actionArray: [UIAction] = []
@@ -47,7 +45,7 @@ class ViewController: UIViewController {
                 if isFiltered {
                     return filteredItems.reversed()
                 }
-                return items.reversed()
+                return FireBaseService.offers.reversed()
             }
             let recipeVC = segue.destination as? OfferDetailsViewController
             recipeVC?.selectedOffer = reversedOffers[selectedOfferIndex]
@@ -74,25 +72,9 @@ class ViewController: UIViewController {
             }
         }
     }
-    @IBAction func logOut(_ sender: UIButton) {
-        try? Auth.auth().signOut()
-    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-        offersRef.observe(.value, with: { snapshot in
-            let completed = self.offersRef.observe(.value) { snapshot in
-                var newItems: [Offer] = []
-                for child in snapshot.children {
-                    if
-                        let snapshot = child as? DataSnapshot,
-                        let offer = Offer(snapshot: snapshot) {
-                        newItems.append(offer)
-                    }
-                }
-                self.items = newItems
-            }
-            self.refObservers.append(completed)
-        })
         usersRef.observe(.value, with: { snapshot in
             let completed = self.usersRef.observe(.value) { snapshot in
                 var newUsers: [String:User] = [:]
@@ -155,13 +137,13 @@ extension ViewController: UITextFieldDelegate {
         }
         self.isFiltered = true
         var filteredItems: [Offer] = []
-        for item in items {
+        for item in FireBaseService.offers {
             if item.name.capitalized.contains(searchedItem.capitalized) {
                 filteredItems.append(item)
             }
         }
         if filteredItems.isEmpty {
-            presentAlert(message: "Sorry no offers were found.")
+            presentAlert(title: "No offers", message: "Sorry no offers were found.")
             self.isFiltered = false
         }
         self.filteredItems = filteredItems
@@ -171,7 +153,7 @@ extension ViewController: UITextFieldDelegate {
         return true
     }
     
-    private func presentAlert(message: String) {
+    private func presentAlert(title: String,message: String) {
         let alertVC = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
         let action = UIAlertAction(title: "OK", style: .cancel, handler: nil)
         alertVC.addAction(action)

@@ -15,6 +15,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         FirebaseApp.configure()
         FireBaseService.getOffers()
+        FireBaseService.getUsers()
 //        let ref = Database.database().reference()
 //        ref.removeValue()
 //        for i in 1...20 {
