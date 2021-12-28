@@ -86,7 +86,8 @@ extension MyOffersViewController: UITableViewDelegate, UITableViewDataSource {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "updateOffer" {
             let destinationVC = segue.destination as? UpdateOfferViewController
-            destinationVC?.selectedOffer = selectedOffer
+//            destinationVC?.selectedOffer = selectedOffer
+            destinationVC?.selectedOfferIndex = selectedOffer?.key
             destinationVC?.usersOffersIds = usersOffersIds
             destinationVC?.updateOfferDelegate = self
         }

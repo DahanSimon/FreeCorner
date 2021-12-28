@@ -11,6 +11,7 @@ import Firebase
 import FirebaseAuth
 import OpalImagePicker
 import Photos
+import SwiftUI
 
 class PostOfferViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate,UITextFieldDelegate {
     //    let user = Auth.auth().currentUser
@@ -27,37 +28,12 @@ class PostOfferViewController: UIViewController, UIImagePickerControllerDelegate
     var category: Category?
     let storage = Storage.storage().reference()
     
+    @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var nameTextField: UITextField!
     @IBOutlet weak var sendOfferButton: UIButton!
     @IBOutlet weak var descriptionTextField: UITextField!
-    @IBOutlet weak var photoListLabel: UITextView!
     @IBOutlet weak var categoryPickerView: UIPickerView!
-    
-    @IBAction func uploadImage(_ sender: Any) {
-        imagesUrl = []
-        offerImages = []
-        photoListLabel.text = ""
-        let picker = OpalImagePickerController()
-        var images: [UIImage] = []
-        presentOpalImagePickerController(picker, animated: true) { assets in
-            picker.dismiss(animated: true) {
-                for asset in assets {
-                    images.append(self.getAssetThumbnail(asset: asset, size: 400))
-                }
-                self.offerImages = images
-                print(images)
-                for i in 0..<self.offerImages.count {
-                    self.sendData(image: self.offerImages[i], index: i)
-                }
-                
-                self.sendOfferButton.isHidden = true
-            }
-            
-        } cancel: {
-            print("cancel")
-        }
-        
-    }
+   
     func sendData(image: UIImage, index: Int) {
         guard let imageData = image.pngData() else {
             return
@@ -74,9 +50,10 @@ class PostOfferViewController: UIViewController, UIImagePickerControllerDelegate
                 }
                 let string = url.absoluteString
                 self.imagesUrl.append(string)
-                self.photoListLabel.isHidden = false
-                self.photoListLabel.text = self.photoListLabel.text! + "\n image\(index).png"
+//                self.photoListLabel.isHidden = false
+//                self.photoListLabel.text = self.photoListLabel.text! + "\n image\(index).png"
                 self.sendOfferButton.isHidden = false
+                self.collectionView.reloadData()
             }
         }
         
@@ -121,6 +98,9 @@ class PostOfferViewController: UIViewController, UIImagePickerControllerDelegate
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
+        NotificationCenter.default.addObserver(self, selector: #selector(addImageNotificationReceived), name: Notification.Name("addImage"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(notificationReceived(_:)), name: Notification.Name("deletedImage"), object: nil)
+        collectionView.register(PhotosListCollectionViewCell.nib(), forCellWithReuseIdentifier: "PhotosListCollectionViewCell")
         //        try? Auth.auth().signOut()
         offersRef.observe(.value, with: { snapshot in
             let completed = self.offersRef.observe(.value) { snapshot in
@@ -141,32 +121,31 @@ class PostOfferViewController: UIViewController, UIImagePickerControllerDelegate
             self.refObservers.append(completed)
         })
     }
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        picker.dismiss(animated: true, completion: nil)
-        sendOfferButton.isHidden = true
-        guard let image = info[UIImagePickerController.InfoKey.editedImage] as? UIImage else {
-            return
+    
+    @objc func notificationReceived(_ notification: NSNotification) {
+//        collectionView.reloadData()
+        let index = notification.object as! Int
+        imagesUrl.remove(at: index)
+        collectionView.reloadData()
+        if imagesUrl.isEmpty {
+            sendOfferButton.isHidden = true
         }
-        guard let imageData = image.pngData() else {
-            return
-        }
-        storage.child("images/\(self.offers.count)/image\(self.offerImages.count).png").putData(imageData, metadata: nil) { _, error in
-            guard error == nil else {
-                print("error")
-                return
-            }
-            self.storage.child("images/\(self.offers.count)/image\(self.offerImages.count).png").downloadURL { url, error in
-                guard let url = url, error == nil else {
-                    print("error")
-                    return
+        
+    }
+    @objc func addImageNotificationReceived() {
+        let picker = OpalImagePickerController()
+        let previousImagesCount = offerImages.count
+        presentOpalImagePickerController(picker, animated: true) { assets in
+            picker.dismiss(animated: true) {
+                for asset in assets {
+                    self.offerImages.append(self.getAssetThumbnail(asset: asset, size: 400))
                 }
-                let string = url.absoluteString
-                self.imagesUrl.append(string)
-                self.photoListLabel.isHidden = false
-                self.photoListLabel.text = self.photoListLabel.text! + "\n image\(self.offerImages.count).png"
-                self.sendOfferButton.isHidden = false
+                for i in previousImagesCount..<self.offerImages.count {
+                    self.sendData(image: self.offerImages[i], index: i)
+                }
+                self.sendOfferButton.isHidden = true
             }
-        }
+        } cancel: { }
     }
     @IBAction func sendOfferButtonTapped(_ sender: Any) {
         //        let user = Auth.auth().currentUser
@@ -192,7 +171,6 @@ class PostOfferViewController: UIViewController, UIImagePickerControllerDelegate
         sendOfferButton.isHidden = true
         self.nameTextField.text = ""
         self.offerImages = []
-        self.photoListLabel.text = ""
         self.descriptionTextField.text = ""
     }
     override func viewDidLoad() {
@@ -213,6 +191,35 @@ extension PostOfferViewController:  UIPickerViewDelegate, UIPickerViewDataSource
         return Categories.allCases.count
     }
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        pickerView.setValue(UIColor(red: 249, green: 251, blue: 178, alpha: 1), forKey: "textColor")
         return Categories.allCases[row].rawValue
+    }
+}
+
+extension PostOfferViewController:  UICollectionViewDelegate, UICollectionViewDataSource,UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return (imagesUrl.count + 1)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotosListCollectionViewCell", for: indexPath) as? PhotosListCollectionViewCell else {
+            return UICollectionViewCell()
+        }
+        if imagesUrl.count > indexPath.row {
+            let ids = offers.keys
+            var id: String {
+                var id1: String = "0"
+                for key in ids {
+                    if key > id1 {
+                        id1 = key
+                    }
+                }
+                return id1
+            }
+            cell.configure(imageUrl: imagesUrl[indexPath.row], index: indexPath.row, offersId: id)
+        } else {
+            cell.showAddImageButton()
+        }
+        return cell
     }
 }

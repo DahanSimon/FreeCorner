@@ -48,9 +48,6 @@ class Offer {
         self.ref = snapshot.ref
         self.key = snapshot.key
     }
-
-    // MARK: Convert GroceryItem to AnyObject
-    
 }
 
 enum Categories: String, CaseIterable {

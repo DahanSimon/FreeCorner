@@ -13,17 +13,17 @@ class FireBaseService {
     static let offersRef = Database.database().reference(withPath: "offers")
     static let userRef = Database.database().reference(withPath: "users")
     static var refObservers: [DatabaseHandle] = []
-    static var offers:[Offer] = []
+    static var offers:[String:Offer] = [:]
     static var users:[String: User] = [:]
     static func getOffers() {
         offersRef.observe(.value, with: { snapshot in
             let completed = self.offersRef.observe(.value) { snapshot in
-                var newItems: [Offer] = []
+                var newItems: [String:Offer] = [:]
                 for child in snapshot.children {
                     if
-                        let snapshot = child as? DataSnapshot,
-                        let offer = Offer(snapshot: snapshot) {
-                        newItems.append(offer)
+                        let snapshot1 = child as? DataSnapshot,
+                        let offer = Offer(snapshot: snapshot1) {
+                        newItems[offer.key] = offer
                     }
                 }
                 FireBaseService.offers = newItems

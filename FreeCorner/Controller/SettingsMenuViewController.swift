@@ -15,13 +15,9 @@ class SettingsMenuViewController: UIViewController {
     @IBOutlet weak var logButton: UIButton!
     override func viewDidLoad() {
         super.viewDidLoad()
-        if Auth.auth().currentUser == nil {
-            myOffersButton.isHidden = true
-            accountSettingsButton.isHidden = true
-            logButton.setTitle("Log In", for: .normal)
-        }
+        isUserConnected()
     }
-    override func viewWillAppear(_ animated: Bool) {
+    fileprivate func isUserConnected() {
         if Auth.auth().currentUser == nil {
             performSegue(withIdentifier: "settingsToLoginSegue", sender: self)
         } else {
@@ -31,6 +27,17 @@ class SettingsMenuViewController: UIViewController {
         }
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        isUserConnected()
+    }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let controller = segue.destination as? SignUpViewController {
+            controller.completionHandler = {
+                self.isUserConnected()
+                self.dismiss(animated: true, completion: nil)
+            }
+        }
+    }
 
     @IBAction func logOut(_ sender: UIButton) {
         if Auth.auth().currentUser == nil {

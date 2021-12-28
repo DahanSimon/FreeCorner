@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Photos
 class PhotosListCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var offerPicture: UIImageView!
     @IBOutlet weak var button: UIButton!
@@ -34,8 +35,14 @@ class PhotosListCollectionViewCell: UICollectionViewCell {
         offerPicture.isHidden = true
         button.isHidden = true
     }
+    @IBAction func addImageButtonTapped(_ sender: Any) {
+        NotificationCenter.default.post(name: Notification.Name("addImage"), object: index)
+       
+    }
+    
+    
     @IBAction func deleteButtonTapped(_ sender: Any) {
-        FireBaseService().deleteImage(offersId: offersId, imageId: String(index))
+        NotificationCenter.default.post(name: Notification.Name("deletedImage"), object: index)
     }
     static func nib() -> UINib {
         return UINib(nibName: "PhotosListCollectionViewCell", bundle: nil)

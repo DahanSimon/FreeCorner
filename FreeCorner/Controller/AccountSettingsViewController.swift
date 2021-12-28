@@ -19,8 +19,7 @@ class AccountSettingsViewController: UIViewController {
     @IBOutlet weak var streetNameTextField: UITextField!
     @IBOutlet weak var zipCodeTextField: UITextField!
     @IBOutlet weak var cityNameTextField: UITextField!
-    
-    
+        
     let userRef = Database.database().reference(withPath: "users")
     var userId: String?
     
@@ -71,5 +70,11 @@ class AccountSettingsViewController: UIViewController {
         let action = UIAlertAction(title: "OK", style: .cancel, handler: nil)
         alertVC.addAction(action)
         self.present(alertVC, animated: true, completion: nil)
+    }
+}
+extension AccountSettingsViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
     }
 }

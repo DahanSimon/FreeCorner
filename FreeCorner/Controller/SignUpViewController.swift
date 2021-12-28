@@ -20,13 +20,14 @@ class SignUpViewController: UIViewController,UITextFieldDelegate {
     @IBOutlet weak var cityNameTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
     
+    var completionHandler: (() -> Void)?
     let usersRef = Database.database().reference()
     override func viewDidLoad() {
         super.viewDidLoad()
     }
     override func viewWillAppear(_ animated: Bool) {
         if Auth.auth().currentUser != nil {
-            self.dismiss(animated: true, completion: nil)
+            self.completionHandler?()
         }
     }
     @IBAction func signUpButtonTapped(_ sender: UIButton) {
@@ -45,7 +46,7 @@ class SignUpViewController: UIViewController,UITextFieldDelegate {
             FireBaseService().populateUser(id: id, name: firstName + " " + lastName, phone: phoneNumber, address: ["Road Name": streetNumber + " " + streetName,"Postal Code": zipCode,"City Name": cityName], offer: nil, email: email)
         }
         if Auth.auth().currentUser != nil {
-            self.dismiss(animated: true, completion: nil)
+            self.completionHandler?()
         }
     }
     @IBAction func signInButtonTapped(_ sender: Any) {

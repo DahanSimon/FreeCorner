@@ -23,6 +23,7 @@ class SignInViewController: UIViewController {
         }
         Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
             if let error = error {
+                self.presentAlert(title: "error", message: error.localizedDescription)
                 print(error.localizedDescription)
                 return
             }
@@ -33,5 +34,12 @@ class SignInViewController: UIViewController {
     }
     @IBAction func closeButtonTapped(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
+    }
+    
+    private func presentAlert(title: String,message: String) {
+        let alertVC = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let action = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+        alertVC.addAction(action)
+        self.present(alertVC, animated: true, completion: nil)
     }
 }

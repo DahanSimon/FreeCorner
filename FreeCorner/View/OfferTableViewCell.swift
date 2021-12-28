@@ -22,15 +22,16 @@ class OfferTableViewCell: UITableViewCell {
 
     @IBOutlet weak var offerListView: UIView!
     @IBOutlet weak var offerPicture: UIImageView!
-    @IBOutlet weak var offerDescription: UILabel!
     @IBOutlet weak var offerName: UILabel!
     @IBOutlet weak var offerLocation: UILabel!
+    @IBOutlet weak var labelsStackView: UIStackView!
     let activityIndicator = UIActivityIndicatorView()
 
     override func awakeFromNib() {
         super.awakeFromNib()
-//        offerPicture.isHidden = true
         self.offerListView.layer.cornerRadius = 10
+        self.offerPicture.layer.cornerRadius = 10
+        self.labelsStackView.layer.cornerRadius = 5
         self.textLabel?.textAlignment = .center
         self.textLabel?.font = UIFont(name: "Montserrat", size: 18)
         addShadow()
@@ -41,8 +42,7 @@ class OfferTableViewCell: UITableViewCell {
         offerListView.layer.shadowOffset = CGSize(width: 2.0, height: 2.0)
         offerListView.layer.shadowOpacity = 2.0
     }
-    func configure(name: String, description: String, location: String, imageUrl: URL) {
-        offerDescription.text = description
+    func configure(name: String, location: String, imageUrl: URL) {
         offerLocation.text = location
         offerName.text = name
         activityIndicator.frame = self.offerPicture.bounds

@@ -10,25 +10,78 @@ import SwiftUI
 import Firebase
 import FirebaseDatabase
 import FirebaseAuth
+import FirebaseStorage
 
 protocol UpdateOfferDelegate {
     func didUpdateOffer(name: String, id: Int, description: String, images: [String], owner: String, category: String)
 }
 
-class UpdateOfferViewController: UIViewController {
+class UpdateOfferViewController: UIViewController, UIImagePickerControllerDelegate & UINavigationControllerDelegate {
 
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var nameTextField: UITextField!
     @IBOutlet weak var descriptionTextField: UITextField!
     @IBOutlet weak var categoryPickerView: UIPickerView!
+    @IBOutlet weak var updateButton: UIButton!
     var updateOfferDelegate: UpdateOfferDelegate!
+    var selectedOfferIndex: String?
     var selectedOffer: Offer?
     var usersOffersIds: [String]?
+    var offers: [String: Offer] {
+        collectionView.reloadData()
+        return FireBaseService.offers
+    }
+    let storage = Storage.storage().reference()
     let offerRef = Database.database().reference(withPath: "offers")
     let userRef = Database.database().reference(withPath: "users")
     let userId = Auth.auth().currentUser?.uid
     override func viewDidLoad() {
         super.viewDidLoad()
+        NotificationCenter.default.addObserver(self, selector: #selector(notificationReceived(_:)), name: Notification.Name("deletedImage"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(addImageNotificationReceived), name: Notification.Name("addImage"), object: nil)
+    }
+    @objc func notificationReceived(_ notification: NSNotification) {
+        var index = notification.object as! Int
+        FireBaseService.offers[selectedOffer!.key]?.images.remove(at: index)
+        collectionView.reloadData()
+    }
+    @objc func addImageNotificationReceived() {
+        
+        let picker = UIImagePickerController()
+            picker.allowsEditing = true
+            picker.delegate = self
+            present(picker, animated: true)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        picker.dismiss(animated: true, completion: nil)
+        updateButton.isHidden = true
+        guard let image = info[UIImagePickerController.InfoKey.editedImage] as? UIImage else {
+            return
+        }
+        guard let imageData = image.pngData(), let offer = self.selectedOffer else {
+            return
+        }
+        storage.child("images/\(offer.key)/image\(offer.images.count).png").putData(imageData, metadata: nil) { _, error in
+            guard error == nil else {
+                print("error")
+                return
+            }
+            self.storage.child("images/\(offer.key)/image\(offer.images.count).png").downloadURL { url, error in
+                guard let url = url, error == nil else {
+                    print("error")
+                    return
+                }
+                let string = url.absoluteString
+//                self.imagesUrl.append(string)
+                FireBaseService.offers[self.selectedOffer!.key]?.images.append(string)
+                self.collectionView.reloadData()
+                self.updateButton.isHidden = false
+            }
+        }
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        selectedOffer = offers[selectedOfferIndex!]
         collectionView.register(PhotosListCollectionViewCell.nib(), forCellWithReuseIdentifier: "PhotosListCollectionViewCell")
         nameTextField.text = selectedOffer?.name
         descriptionTextField.text = selectedOffer?.desctiption
@@ -40,10 +93,12 @@ class UpdateOfferViewController: UIViewController {
         }
         
         updateOfferDelegate.didUpdateOffer(name: name, id: Int(selectedOffer.key)!, description: description, images: selectedOffer.images, owner: userId!, category: Categories.allCases[categoryPickerView.selectedRow(inComponent: 0)].rawValue)
+        FireBaseService.getOffers()
+        FireBaseService.getUsers()
         self.dismiss(animated: true, completion: nil)
     }
 }
-extension UpdateOfferViewController: UICollectionViewDelegate, UICollectionViewDataSource,UICollectionViewDelegateFlowLayout {
+extension UpdateOfferViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return ((selectedOffer?.images.count)! + 1)
     }

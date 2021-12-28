@@ -20,7 +20,7 @@ class UsersOfferTableViewCell: UITableViewCell {
         addShadow()
     }
     private func addShadow() {
-        customView.layer.shadowColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.7).cgColor
+        customView.layer.shadowColor = CGColor(red: 0, green: 0, blue: 0, alpha: 0.2)
         customView.layer.shadowRadius = 2.0
         customView.layer.shadowOffset = CGSize(width: 2.0, height: 2.0)
         customView.layer.shadowOpacity = 2.0

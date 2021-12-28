@@ -4,6 +4,7 @@
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
         <capability name="Image references" minToolsVersion="12.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="collection view cell content view" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -30,6 +31,7 @@
                             <constraint firstAttribute="height" constant="30" id="qsx-tL-h7k"/>
                             <constraint firstAttribute="width" constant="30" id="sbv-V4-V0y"/>
                         </constraints>
+                        <color key="tintColor" systemColor="labelColor"/>
                         <state key="normal" title="Button"/>
                         <buttonConfiguration key="configuration" style="gray" imagePlacement="trailing" buttonSize="large">
                             <imageReference key="image" image="xmark.app" catalog="system" symbolScale="large"/>
@@ -41,10 +43,14 @@
                     </button>
                     <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="U2e-lv-Dpa">
                         <rect key="frame" x="10" y="0.0" width="125" height="125"/>
+                        <color key="tintColor" red="0.93725490199999995" green="1" blue="0.7843137255" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <state key="normal" title="Button"/>
                         <buttonConfiguration key="configuration" style="tinted" imagePlacement="bottom" title="Add Image">
                             <imageReference key="image" image="plus" catalog="system" symbolScale="large"/>
                         </buttonConfiguration>
+                        <connections>
+                            <action selector="addImageButtonTapped:" destination="-1" eventType="touchUpInside" id="upR-D5-g5x"/>
+                        </connections>
                     </button>
                 </subviews>
                 <constraints>
@@ -72,5 +78,8 @@
     <resources>
         <image name="plus" catalog="system" width="128" height="113"/>
         <image name="xmark.app" catalog="system" width="128" height="114"/>
+        <systemColor name="labelColor">
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
     </resources>
 </document>
