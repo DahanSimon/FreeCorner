@@ -171,7 +171,9 @@ class PostOfferViewController: UIViewController, UIImagePickerControllerDelegate
         sendOfferButton.isHidden = true
         self.nameTextField.text = ""
         self.offerImages = []
+        self.imagesUrl = []
         self.descriptionTextField.text = ""
+        collectionView.reloadData()
     }
     override func viewDidLoad() {
         super.viewDidLoad()

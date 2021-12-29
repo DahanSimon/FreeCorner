@@ -9,12 +9,16 @@ import UIKit
 import FirebaseDatabase
 import FirebaseAuth
 class ViewController: UIViewController {
+    
+    //MARK: Outlets
     @IBOutlet weak var textField: UITextField!
     @IBOutlet weak var filterButton: UIButton!
     @IBOutlet weak var tableView: UITableView!
+    
+    //MARK: Variables
     let offersRef = Database.database().reference(withPath: "offers")
     let usersRef = Database.database().reference(withPath: "users")
-    var refObservers: [DatabaseHandle] = []
+//    var refObservers: [DatabaseHandle] = []
     var filteredItems: [String:Offer] = [:]
     var users: [String:User] = [:]
     var isFiltered: Bool = false
@@ -26,27 +30,21 @@ class ViewController: UIViewController {
         }
         return ids
     }
+    //MARK: Overrides
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        filterButton.showsMenuAsPrimaryAction = true
-        var actionArray: [UIAction] = []
-        for category in Categories.allCases {
-            let action = UIAction(title: category.rawValue, state: .off, handler: filterButtonTapped(_:))
-            actionArray.append(action)
-        }
-        filterButton.menu = UIMenu(children: actionArray)
+        setUpFilterMenu()
         tableView.rowHeight = 400
     }
-    @objc func refresh(_ sender:AnyObject) {
-        tableView.reloadData()
-    }
+    
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(true)
-        refObservers.forEach(offersRef.removeObserver(withHandle:))
-        refObservers.forEach(usersRef.removeObserver(withHandle:))
-        refObservers = []
+//        refObservers.forEach(offersRef.removeObserver(withHandle:))
+//        refObservers.forEach(usersRef.removeObserver(withHandle:))
+//        refObservers = []
     }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "offerDetailsSegue"{
             var reversedOffers: [String: Offer] {
@@ -60,6 +58,33 @@ class ViewController: UIViewController {
             recipeVC?.users = self.users
         }
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        usersRef.observe(.value, with: { snapshot in
+            /*let completed = */self.usersRef.observe(.value) { snapshot in
+                var newUsers: [String:User] = [:]
+                for child in snapshot.children {
+                    if
+                        let snapshot = child as? DataSnapshot,
+                        let user = User(snapshot: snapshot) {
+                        newUsers[user.key] = user
+                    }
+                }
+                self.users = newUsers
+                self.tableView.reloadData()
+            }
+//            self.refObservers.append(completed)
+        })
+        tableView.reloadData()
+        
+    }
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        tableView.frame = view.bounds
+    }
+    
+    //MARK: Actions
     @IBAction func filterButtonTapped(_ sender: Any) {
         guard let filter = sender as? UIAction else {
             return
@@ -81,42 +106,42 @@ class ViewController: UIViewController {
         }
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(true)
-        usersRef.observe(.value, with: { snapshot in
-            let completed = self.usersRef.observe(.value) { snapshot in
-                var newUsers: [String:User] = [:]
-                for child in snapshot.children {
-                    if
-                        let snapshot = child as? DataSnapshot,
-                        let user = User(snapshot: snapshot) {
-                        newUsers[user.key] = user
-                    }
-                }
-                self.users = newUsers
-                self.tableView.reloadData()
-            }
-            self.refObservers.append(completed)
-        })
-        tableView.reloadData()
-        
+    @IBAction func hideKeyboard(_ sender: UITapGestureRecognizer) {
+        textField.resignFirstResponder()
     }
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        tableView.frame = view.bounds
+    
+    //MARK: Methods
+    private func presentAlert(title: String,message: String) {
+        let alertVC = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        let action = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+        alertVC.addAction(action)
+        self.present(alertVC, animated: true, completion: nil)
     }
+    
+    fileprivate func setUpFilterMenu() {
+        filterButton.showsMenuAsPrimaryAction = true
+        var actionArray: [UIAction] = []
+        for category in Categories.allCases {
+            let action = UIAction(title: category.rawValue, state: .off, handler: filterButtonTapped(_:))
+            actionArray.append(action)
+        }
+        filterButton.menu = UIMenu(children: actionArray)
+    }
+
 }
 
-extension ViewController: UITableViewDataSource {
+extension ViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return getOffers().count
     }
+    
     func getOffers() -> [String: Offer] {
         if isFiltered {
             return filteredItems
         }
         return FireBaseService.offers
     }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "OfferCell", for: indexPath) as? OfferTableViewCell else {
             return UITableViewCell()
@@ -131,14 +156,12 @@ extension ViewController: UITableViewDataSource {
         return cell
     }
     
-}
-
-extension ViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         self.selectedOfferIndex = offersIds[indexPath.row]
         performSegue(withIdentifier: "offerDetailsSegue", sender: self)
     }
 }
+
 extension ViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
@@ -161,17 +184,6 @@ extension ViewController: UITextFieldDelegate {
             self.tableView.reloadData()
         }
         return true
-    }
-    
-    private func presentAlert(title: String,message: String) {
-        let alertVC = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
-        let action = UIAlertAction(title: "OK", style: .cancel, handler: nil)
-        alertVC.addAction(action)
-        self.present(alertVC, animated: true, completion: nil)
-    }
-    
-    @IBAction func hideKeyboard(_ sender: UITapGestureRecognizer) {
-        textField.resignFirstResponder()
     }
 }
 
