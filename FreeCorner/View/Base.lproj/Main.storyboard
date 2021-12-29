@@ -1559,7 +1559,7 @@
                                                             <color key="baseBackgroundColor" red="0.93725490199999995" green="1" blue="0.7843137255" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         </buttonConfiguration>
                                                         <connections>
-                                                            <action selector="sendEmailButtonTapped:" destination="f3I-0R-KTh" eventType="touchUpInside" id="u3R-a2-rOh"/>
+                                                            <action selector="sendMessageButtonTapped:" destination="f3I-0R-KTh" eventType="touchUpInside" id="tPD-Wb-Fga"/>
                                                         </connections>
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qW0-EP-ZX6">

@@ -59,7 +59,6 @@ class OffersListViewController: UIViewController {
             }
             let recipeVC = segue.destination as? OfferDetailsViewController
             recipeVC?.selectedOffer = reversedOffers[selectedOfferIndex]
-            recipeVC?.users = users
         }
     }
     
