@@ -33,7 +33,7 @@ class OfferDetailsViewController: UIViewController {
         geoCoder.geocodeAddressString(postalCode) { (placemarks, error) in
             guard
                 let placemarks = placemarks,
-                let location = placemarks.first?.location
+                let location   = placemarks.first?.location
             else {
                 return
             }
@@ -59,7 +59,7 @@ class OfferDetailsViewController: UIViewController {
         
         // Configure the fields of the interface.
         composeVC.recipients = [owner.phone]
-        composeVC.body = "Hey! Your product on FreeKorner is still available ? \nThank you !"
+        composeVC.body       = "Hey! Your product on FreeKorner is still available ? \nThank you !"
         
         // Present the view controller modally.
         if MFMessageComposeViewController.canSendText() {

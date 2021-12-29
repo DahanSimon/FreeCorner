@@ -16,17 +16,18 @@ class OffersListViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
     //MARK: Variables
-    let offersRef = Database.database().reference(withPath: "offers")
-    let usersRef = Database.database().reference(withPath: "users")
+    let offersRef                      = Database.database().reference(withPath: "offers")
+    let usersRef                       = Database.database().reference(withPath: "users")
     var filteredOffers: [String:Offer] = [:]
+    var isFiltered: Bool               = false
+    var selectedOfferIndex: String     = "0"
     var users: [String: User] {
         return FireBaseService.users
     }
     var offers: [String: Offer] {
         return FireBaseService.offers
     }
-    var isFiltered: Bool = false
-    var selectedOfferIndex: String = "0"
+
     var offersIds: [String] {
         var ids: [String] = []
         if isFiltered {
@@ -40,8 +41,8 @@ class OffersListViewController: UIViewController {
         }
         return ids
     }
-    //MARK: Overrides
     
+    //MARK: Overrides
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpFilterMenu()
@@ -136,7 +137,7 @@ extension OffersListViewController: UITableViewDataSource, UITableViewDelegate {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "OfferCell", for: indexPath) as? OfferTableViewCell else {
             return UITableViewCell()
         }
-        let offerId = offersIds[indexPath.row]
+        let offerId                      = offersIds[indexPath.row]
         let offersList: [String: Offer]  = getOffers()
         guard let userId = offersList[offerId]?.owner, let ownerLocation = users[userId]?.address, let ownerZipCode = ownerLocation["Postal Code"], let name = offersList[offerId]?.name, let firstImage = offersList[offerId]?.images[0], let imageURL = URL(string: firstImage) else {
             return UITableViewCell()
@@ -162,7 +163,7 @@ extension OffersListViewController: UITextFieldDelegate {
             self.tableView.reloadData()
             return true
         }
-        self.isFiltered = true
+        self.isFiltered                     = true
         var filteredOffers: [String: Offer] = [:]
         for offer in FireBaseService.offers.values {
             if offer.name.capitalized.contains(searchedItem.capitalized) {

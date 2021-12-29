@@ -13,27 +13,96 @@ import OpalImagePicker
 import Photos
 import SwiftUI
 
-class PostOfferViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate,UITextFieldDelegate {
-    //    let user = Auth.auth().currentUser
-    var offers: [String: Offer] = [:]
-    var usersOffers: [String: String]? = [:]
-    let offersRef = Database.database().reference(withPath: "offers")
-    let usersRef = Database.database().reference(withPath: "users")
-    var refObservers: [DatabaseHandle] = []
+class PostOfferViewController: UIViewController{
+    
+    //MARK: Variables
+    var usersOffers: [String: String]?  = [:]
+    let offersRef                       = Database.database().reference(withPath: "offers")
+    let usersRef                        = Database.database().reference(withPath: "users")
+    var refObservers: [DatabaseHandle]  = []
+    let storage                         = Storage.storage().reference()
+    var offerImages: [UIImage]          = []
+    var imagesUrl: [String]             = []
     var offerName: String?
     var offerDescription: String?
-    var offerImages: [UIImage] = []
-    var imagesUrl: [String] = []
-    var owner = "1"
     var category: Category?
-    let storage = Storage.storage().reference()
+    var offers: [String: Offer] {
+        return FireBaseService.offers
+    }
     
+    
+    //MARK: Outlets
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var nameTextField: UITextField!
     @IBOutlet weak var sendOfferButton: UIButton!
     @IBOutlet weak var descriptionTextField: UITextField!
     @IBOutlet weak var categoryPickerView: UIPickerView!
    
+    //MARK: Overrides
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.sendOfferButton.isHidden = true
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        if Auth.auth().currentUser == nil {
+            performSegue(withIdentifier: "signUpSegue", sender: self)
+        }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        NotificationCenter.default.addObserver(self, selector: #selector(addImageNotificationReceived), name: Notification.Name("addImage"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(notificationReceived(_:)), name: Notification.Name("deletedImage"), object: nil)
+        collectionView.register(PhotosListCollectionViewCell.nib(), forCellWithReuseIdentifier: "PhotosListCollectionViewCell")
+        FireBaseService.getOffers { _ in }
+    }
+    //MARK: Actions
+    @objc func notificationReceived(_ notification: NSNotification) {
+        let index = notification.object as! Int
+        imagesUrl.remove(at: index)
+        collectionView.reloadData()
+        if imagesUrl.isEmpty {
+            sendOfferButton.isHidden = true
+        }
+        
+    }
+    @objc func addImageNotificationReceived() {
+        let picker              = OpalImagePickerController()
+        let previousImagesCount = offerImages.count
+        presentOpalImagePickerController(picker, animated: true) { assets in
+            picker.dismiss(animated: true) {
+                for asset in assets {
+                    self.offerImages.append(self.getAssetThumbnail(asset: asset, size: 400))
+                }
+                for i in previousImagesCount..<self.offerImages.count {
+                    self.sendData(image: self.offerImages[i], index: i)
+                }
+                self.sendOfferButton.isHidden = true
+            }
+        } cancel: { }
+    }
+    @IBAction func sendOfferButtonTapped(_ sender: Any) {
+        guard let user = Auth.auth().currentUser?.uid, let name = nameTextField.text, let description = descriptionTextField.text else {
+            return
+        }
+        let category = Categories.allCases[categoryPickerView.selectedRow(inComponent: 0)]
+        let ids      = offers.keys
+        var id: String {
+            var id1: String = "0"
+            for key in ids {
+                if key > id1 {
+                    id1 = key
+                }
+            }
+            return id1
+        }
+        FireBaseService().populateOffer(id: Int(id)! + 1, name: name, description: description, images: imagesUrl, owner: user, category: category.rawValue)
+        
+        reset()
+    }
+    
+    //MARK: Methods
     func sendData(image: UIImage, index: Int) {
         guard let imageData = image.pngData() else {
             return
@@ -50,29 +119,23 @@ class PostOfferViewController: UIViewController, UIImagePickerControllerDelegate
                 }
                 let string = url.absoluteString
                 self.imagesUrl.append(string)
-//                self.photoListLabel.isHidden = false
-//                self.photoListLabel.text = self.photoListLabel.text! + "\n image\(index).png"
                 self.sendOfferButton.isHidden = false
                 self.collectionView.reloadData()
             }
         }
-        
     }
     func getAssetThumbnail(asset: PHAsset, size: CGFloat) -> UIImage {
-        let retinaScale = UIScreen.main.scale
-        let retinaSquare = CGSize(width: size * retinaScale, height: size * retinaScale)
-        let cropSizeLength = min(asset.pixelWidth, asset.pixelHeight)
-        let square = CGRect(x: 0, y: 0, width: CGFloat(cropSizeLength), height: CGFloat(cropSizeLength))
-        let cropRect = square.applying(CGAffineTransform(scaleX: 1.0/CGFloat(asset.pixelWidth), y: 1.0/CGFloat(asset.pixelHeight)))
-        
-        let manager = PHImageManager.default()
-        let options = PHImageRequestOptions()
-        var thumbnail = UIImage()
-        
-        options.isSynchronous = true
-        options.deliveryMode = .highQualityFormat
-        options.resizeMode = .exact
-        
+        let retinaScale            = UIScreen.main.scale
+        let retinaSquare           = CGSize(width: size * retinaScale, height: size * retinaScale)
+        let cropSizeLength         = min(asset.pixelWidth, asset.pixelHeight)
+        let square                 = CGRect(x: 0, y: 0, width: CGFloat(cropSizeLength), height: CGFloat(cropSizeLength))
+        let cropRect               = square.applying(CGAffineTransform(scaleX: 1.0/CGFloat(asset.pixelWidth), y: 1.0/CGFloat(asset.pixelHeight)))
+        let manager                = PHImageManager.default()
+        let options                = PHImageRequestOptions()
+        var thumbnail              = UIImage()
+        options.isSynchronous      = true
+        options.deliveryMode       = .highQualityFormat
+        options.resizeMode         = .exact
         options.normalizedCropRect = cropRect
         
         manager.requestImage(for: asset, targetSize: retinaSquare, contentMode: .aspectFit, options: options, resultHandler: {(result, info)->Void in
@@ -91,98 +154,18 @@ class PostOfferViewController: UIViewController, UIImagePickerControllerDelegate
         alertController.popoverPresentationController?.sourceRect = view.frame
         return alertController
     }
-    override func viewDidAppear(_ animated: Bool) {
-        if Auth.auth().currentUser == nil {
-            performSegue(withIdentifier: "signUpSegue", sender: self)
-        }
-    }
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(true)
-        NotificationCenter.default.addObserver(self, selector: #selector(addImageNotificationReceived), name: Notification.Name("addImage"), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(notificationReceived(_:)), name: Notification.Name("deletedImage"), object: nil)
-        collectionView.register(PhotosListCollectionViewCell.nib(), forCellWithReuseIdentifier: "PhotosListCollectionViewCell")
-        //        try? Auth.auth().signOut()
-        offersRef.observe(.value, with: { snapshot in
-            let completed = self.offersRef.observe(.value) { snapshot in
-                var newItems: [String: Offer] = [:]
-                for child in snapshot.children {
-                    if
-                        let snapshot = child as? DataSnapshot,
-                        let offer = Offer(snapshot: snapshot) {
-                        newItems[offer.key] = offer
-                        if offer.owner == Auth.auth().currentUser?.uid {
-                            self.usersOffers?[offer.key] = offer.name
-                            self.usersRef.child("\(Auth.auth().currentUser!.uid)/offers").setValue(self.usersOffers)
-                        }
-                    }
-                }
-                self.offers = newItems
-            }
-            self.refObservers.append(completed)
-        })
-    }
     
-    @objc func notificationReceived(_ notification: NSNotification) {
-//        collectionView.reloadData()
-        let index = notification.object as! Int
-        imagesUrl.remove(at: index)
-        collectionView.reloadData()
-        if imagesUrl.isEmpty {
-            sendOfferButton.isHidden = true
-        }
-        
-    }
-    @objc func addImageNotificationReceived() {
-        let picker = OpalImagePickerController()
-        let previousImagesCount = offerImages.count
-        presentOpalImagePickerController(picker, animated: true) { assets in
-            picker.dismiss(animated: true) {
-                for asset in assets {
-                    self.offerImages.append(self.getAssetThumbnail(asset: asset, size: 400))
-                }
-                for i in previousImagesCount..<self.offerImages.count {
-                    self.sendData(image: self.offerImages[i], index: i)
-                }
-                self.sendOfferButton.isHidden = true
-            }
-        } cancel: { }
-    }
-    @IBAction func sendOfferButtonTapped(_ sender: Any) {
-        //        let user = Auth.auth().currentUser
-        guard let user = Auth.auth().currentUser?.uid, let name = nameTextField.text, let description = descriptionTextField.text else {
-            return
-        }
-        let category = Categories.allCases[categoryPickerView.selectedRow(inComponent: 0)]
-        let ids = offers.keys
-        var id: String {
-            var id1: String = "0"
-            for key in ids {
-                if key > id1 {
-                    id1 = key
-                }
-            }
-            return id1
-        }
-        FireBaseService().populateOffer(id: Int(id)! + 1, name: name, description: description, images: imagesUrl, owner: user, category: category.rawValue)
-        
-        reset()
-    }
+    
+   
     func reset() {
-        sendOfferButton.isHidden = true
-        self.nameTextField.text = ""
-        self.offerImages = []
-        self.imagesUrl = []
+        sendOfferButton.isHidden       = true
+        self.nameTextField.text        = ""
+        self.offerImages               = []
+        self.imagesUrl                 = []
         self.descriptionTextField.text = ""
         collectionView.reloadData()
     }
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        self.sendOfferButton.isHidden = true
-    }
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        return true
-    }
+    
 }
 extension PostOfferViewController:  UIPickerViewDelegate, UIPickerViewDataSource {
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
@@ -223,5 +206,12 @@ extension PostOfferViewController:  UICollectionViewDelegate, UICollectionViewDa
             cell.showAddImageButton()
         }
         return cell
+    }
+}
+
+extension PostOfferViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
     }
 }
