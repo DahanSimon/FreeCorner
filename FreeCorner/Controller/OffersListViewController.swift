@@ -8,7 +8,7 @@
 import UIKit
 import FirebaseDatabase
 import FirebaseAuth
-class ViewController: UIViewController {
+class OffersListViewController: UIViewController {
     
     //MARK: Outlets
     @IBOutlet weak var textField: UITextField!
@@ -18,15 +18,25 @@ class ViewController: UIViewController {
     //MARK: Variables
     let offersRef = Database.database().reference(withPath: "offers")
     let usersRef = Database.database().reference(withPath: "users")
-//    var refObservers: [DatabaseHandle] = []
-    var filteredItems: [String:Offer] = [:]
-    var users: [String:User] = [:]
+    var filteredOffers: [String:Offer] = [:]
+    var users: [String: User] {
+        return FireBaseService.users
+    }
+    var offers: [String: Offer] {
+        return FireBaseService.offers
+    }
     var isFiltered: Bool = false
     var selectedOfferIndex: String = "0"
     var offersIds: [String] {
         var ids: [String] = []
-        for key in FireBaseService.offers.keys {
-            ids.append(key)
+        if isFiltered {
+            for key in filteredOffers.keys {
+                ids.append(key)
+            }
+        } else {
+            for key in FireBaseService.offers.keys {
+                ids.append(key)
+            }
         }
         return ids
     }
@@ -36,48 +46,30 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         setUpFilterMenu()
         tableView.rowHeight = 400
-    }
-    
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(true)
-//        refObservers.forEach(offersRef.removeObserver(withHandle:))
-//        refObservers.forEach(usersRef.removeObserver(withHandle:))
-//        refObservers = []
+        tableView.reloadData()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "offerDetailsSegue"{
             var reversedOffers: [String: Offer] {
                 if isFiltered {
-                    return filteredItems
+                    return filteredOffers
                 }
-                return FireBaseService.offers
+                return offers
             }
             let recipeVC = segue.destination as? OfferDetailsViewController
             recipeVC?.selectedOffer = reversedOffers[selectedOfferIndex]
-            recipeVC?.users = self.users
+            recipeVC?.users = users
         }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-        usersRef.observe(.value, with: { snapshot in
-            /*let completed = */self.usersRef.observe(.value) { snapshot in
-                var newUsers: [String:User] = [:]
-                for child in snapshot.children {
-                    if
-                        let snapshot = child as? DataSnapshot,
-                        let user = User(snapshot: snapshot) {
-                        newUsers[user.key] = user
-                    }
-                }
-                self.users = newUsers
+        FireBaseService.getOffers { success in
+            if success {
                 self.tableView.reloadData()
             }
-//            self.refObservers.append(completed)
-        })
-        tableView.reloadData()
-        
+        }
     }
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -99,7 +91,7 @@ class ViewController: UIViewController {
                     filteredOffers[offer.key] = offer
                 }
             }
-            self.filteredItems = filteredOffers
+            self.filteredOffers = filteredOffers
             if !self.users.isEmpty {
                 self.tableView.reloadData()
             }
@@ -127,19 +119,18 @@ class ViewController: UIViewController {
         }
         filterButton.menu = UIMenu(children: actionArray)
     }
-
-}
-
-extension ViewController: UITableViewDataSource, UITableViewDelegate {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return getOffers().count
-    }
     
     func getOffers() -> [String: Offer] {
         if isFiltered {
-            return filteredItems
+            return filteredOffers
         }
-        return FireBaseService.offers
+        return offers
+    }
+}
+
+extension OffersListViewController: UITableViewDataSource, UITableViewDelegate {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return getOffers().count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -147,12 +138,11 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
             return UITableViewCell()
         }
         let offerId = offersIds[indexPath.row]
-        let itemsList: [String: Offer]  = getOffers()
-        var ownerLocation: [String: String] = ["Postal Code":""]
-        let userIndex = itemsList[offerId]?.owner
-        ownerLocation = users[userIndex!]!.address
-        cell.configure(name: itemsList[offerId]!.name, location: "Zipcode: \n" + ownerLocation["Postal Code"]!, imageUrl: URL(string: (itemsList[offerId]?.images[0])!)!)
-        print(FireBaseService.offers)
+        let offersList: [String: Offer]  = getOffers()
+        guard let userId = offersList[offerId]?.owner, let ownerLocation = users[userId]?.address, let ownerZipCode = ownerLocation["Postal Code"], let name = offersList[offerId]?.name, let firstImage = offersList[offerId]?.images[0], let imageURL = URL(string: firstImage) else {
+            return UITableViewCell()
+        }
+        cell.configure(name: name, location: "Zipcode: \n" + ownerZipCode, imageUrl: imageURL)
         return cell
     }
     
@@ -162,24 +152,29 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
     }
 }
 
-extension ViewController: UITextFieldDelegate {
+extension OffersListViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         guard let searchedItem = textField.text else {
             return true
         }
+        if searchedItem.isEmpty {
+            self.isFiltered = false
+            self.tableView.reloadData()
+            return true
+        }
         self.isFiltered = true
-        var filteredItems: [String: Offer] = [:]
-        for item in FireBaseService.offers.values {
-            if item.name.capitalized.contains(searchedItem.capitalized) {
-                filteredItems[item.key] = item
+        var filteredOffers: [String: Offer] = [:]
+        for offer in FireBaseService.offers.values {
+            if offer.name.capitalized.contains(searchedItem.capitalized) {
+                filteredOffers[offer.key] = offer
             }
         }
-        if filteredItems.isEmpty {
+        if filteredOffers.isEmpty {
             presentAlert(title: "No offers", message: "Sorry no offers were found.")
             self.isFiltered = false
         }
-        self.filteredItems = filteredItems
+        self.filteredOffers = filteredOffers
         if !self.users.isEmpty {
             self.tableView.reloadData()
         }

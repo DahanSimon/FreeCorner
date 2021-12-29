@@ -41,7 +41,7 @@ class UpdateOfferViewController: UIViewController, UIImagePickerControllerDelega
         NotificationCenter.default.addObserver(self, selector: #selector(addImageNotificationReceived), name: Notification.Name("addImage"), object: nil)
     }
     @objc func notificationReceived(_ notification: NSNotification) {
-        var index = notification.object as! Int
+        let index = notification.object as! Int
         FireBaseService.offers[selectedOffer!.key]?.images.remove(at: index)
         collectionView.reloadData()
     }
@@ -93,7 +93,9 @@ class UpdateOfferViewController: UIViewController, UIImagePickerControllerDelega
         }
         
         updateOfferDelegate.didUpdateOffer(name: name, id: Int(selectedOffer.key)!, description: description, images: selectedOffer.images, owner: userId!, category: Categories.allCases[categoryPickerView.selectedRow(inComponent: 0)].rawValue)
-        FireBaseService.getOffers()
+        FireBaseService.getOffers { success in
+            
+        }
         FireBaseService.getUsers()
         self.dismiss(animated: true, completion: nil)
     }

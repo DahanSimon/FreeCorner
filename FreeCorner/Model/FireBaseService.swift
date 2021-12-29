@@ -15,7 +15,7 @@ class FireBaseService {
     static var refObservers: [DatabaseHandle] = []
     static var offers:[String:Offer] = [:]
     static var users:[String: User] = [:]
-    static func getOffers() {
+    static func getOffers( callback: @escaping (Bool) -> Void) {
         offersRef.observe(.value, with: { snapshot in
             let completed = self.offersRef.observe(.value) { snapshot in
                 var newItems: [String:Offer] = [:]
@@ -27,6 +27,7 @@ class FireBaseService {
                     }
                 }
                 FireBaseService.offers = newItems
+                callback(true)
             }
             self.refObservers.append(completed)
         })

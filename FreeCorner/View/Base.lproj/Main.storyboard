@@ -1330,7 +1330,7 @@
         <!--Offers-->
         <scene sceneID="W3l-I6-6Pm">
             <objects>
-                <viewController id="lTy-9F-za0" customClass="ViewController" customModule="FreeCorner" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="lTy-9F-za0" customClass="OffersListViewController" customModule="FreeCorner" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="KA9-sw-kZF">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="813"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1338,11 +1338,11 @@
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="G2c-Iq-Yv7">
                                 <rect key="frame" x="10" y="88" width="394" height="725"/>
                                 <subviews>
-                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="5Ik-Wy-Z8U">
+                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="5Ik-Wy-Z8U">
                                         <rect key="frame" x="0.0" y="0.0" width="394" height="31"/>
                                         <subviews>
                                             <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="bezel" placeholder="Search" textAlignment="natural" clearsOnBeginEditing="YES" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="OYl-BC-7OE">
-                                                <rect key="frame" x="0.0" y="0.0" width="319" height="31"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="344" height="31"/>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="50" id="MPL-IV-ZqR"/>
@@ -1355,9 +1355,9 @@
                                                 </connections>
                                             </textField>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="d3R-m7-dBa">
-                                                <rect key="frame" x="324" y="0.0" width="70" height="31"/>
+                                                <rect key="frame" x="349" y="0.0" width="45" height="31"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="70" id="snc-gd-S02"/>
+                                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="44" id="snc-gd-S02"/>
                                                 </constraints>
                                                 <menu key="menu" title="Filters" id="y3N-Dx-ekF">
                                                     <children>
