@@ -9,21 +9,19 @@ import UIKit
 import FirebaseAuth
 import FirebaseDatabase
 class MyOffersViewController: UIViewController, UpdateOfferDelegate {
-    func didUpdateOffer(name: String, id: Int, description: String, images: [String], owner: String, category: String) {
-        FireBaseService().populateOffer(id: id, name: name, description: description, images: images, owner: owner, category: category)
-        usersOffers[String(id)] = Offer(name: name, description: description, images: images, owner: owner, category: category, key: String(id))
-        tableView.reloadData()
-    }
-    
+    //MARK: Outlets
     @IBOutlet weak var tableView: UITableView!
     
-    var usersOffers: [String: Offer] = [:]
-    var usersOffersIds: [String] = []
-    let userId = Auth.auth().currentUser!.uid
-    let offerRef = Database.database().reference(withPath: "offers")
-    let userRef = Database.database().reference(withPath: "users")
-    var refObservers: [DatabaseHandle] = []
+    //MARK: Variables
+    var usersOffers: [String: Offer]    = [:]
+    var usersOffersIds: [String]        = []
+    let userId                          = Auth.auth().currentUser!.uid
+    let offerRef                        = Database.database().reference(withPath: "offers")
+    let userRef                         = Database.database().reference(withPath: "users")
+    var refObservers: [DatabaseHandle]  = []
     var selectedOffer: Offer?
+    
+    //MARK: Overrides
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.rowHeight = 70
@@ -51,7 +49,22 @@ class MyOffersViewController: UIViewController, UpdateOfferDelegate {
                 }
             }
         }
-        
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "updateOffer" {
+            let destinationVC = segue.destination as? UpdateOfferViewController
+            destinationVC?.selectedOfferIndex = selectedOffer?.key
+            destinationVC?.usersOffersIds = usersOffersIds
+            destinationVC?.updateOfferDelegate = self
+        }
+    }
+    
+    //MARK: Methods
+    func didUpdateOffer(name: String, id: Int, description: String, images: [String], owner: String, category: String) {
+        FireBaseService().populateOffer(id: id, name: name, description: description, images: images, owner: owner, category: category)
+        usersOffers[String(id)] = Offer(name: name, description: description, images: images, owner: owner, category: category, key: String(id))
+        tableView.reloadData()
     }
 }
 
@@ -83,15 +96,7 @@ extension MyOffersViewController: UITableViewDelegate, UITableViewDataSource {
             }
         }
     }
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "updateOffer" {
-            let destinationVC = segue.destination as? UpdateOfferViewController
-//            destinationVC?.selectedOffer = selectedOffer
-            destinationVC?.selectedOfferIndex = selectedOffer?.key
-            destinationVC?.usersOffersIds = usersOffersIds
-            destinationVC?.updateOfferDelegate = self
-        }
-    }
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         self.selectedOffer = usersOffers[usersOffersIds[indexPath.row]]
         performSegue(withIdentifier: "updateOffer", sender: self)

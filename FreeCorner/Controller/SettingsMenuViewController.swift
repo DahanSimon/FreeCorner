@@ -9,7 +9,8 @@ import UIKit
 import FirebaseAuth
 
 class SettingsMenuViewController: UIViewController {
-
+    
+    //MARK: Outlets
     @IBOutlet weak var myOffersButton: UIButton!
     @IBOutlet weak var accountSettingsButton: UIButton!
     @IBOutlet weak var logButton: UIButton!
@@ -17,16 +18,8 @@ class SettingsMenuViewController: UIViewController {
         super.viewDidLoad()
         isUserConnected()
     }
-    fileprivate func isUserConnected() {
-        if Auth.auth().currentUser == nil {
-            performSegue(withIdentifier: "settingsToLoginSegue", sender: self)
-        } else {
-            myOffersButton.isHidden = false
-            accountSettingsButton.isHidden = false
-            logButton.setTitle("Log Out", for: .normal)
-        }
-    }
-    
+
+    //MARK: Overrides
     override func viewWillAppear(_ animated: Bool) {
         isUserConnected()
     }
@@ -38,7 +31,8 @@ class SettingsMenuViewController: UIViewController {
             }
         }
     }
-
+    
+    //MARK: Actions
     @IBAction func logOut(_ sender: UIButton) {
         if Auth.auth().currentUser == nil {
             performSegue(withIdentifier: "settingsToLoginSegue", sender: self)
@@ -48,5 +42,15 @@ class SettingsMenuViewController: UIViewController {
         logButton.setTitle("Log In", for: .normal)
         try? Auth.auth().signOut()
     }
-
+    
+    //MARK; Methods
+    fileprivate func isUserConnected() {
+        if Auth.auth().currentUser == nil {
+            performSegue(withIdentifier: "settingsToLoginSegue", sender: self)
+        } else {
+            myOffersButton.isHidden = false
+            accountSettingsButton.isHidden = false
+            logButton.setTitle("Log Out", for: .normal)
+        }
+    }
 }

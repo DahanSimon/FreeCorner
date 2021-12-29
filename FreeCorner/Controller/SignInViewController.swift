@@ -8,15 +8,17 @@
 import UIKit
 import FirebaseAuth
 class SignInViewController: UIViewController {
-
+    //MARK: Outlets
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
+    
+    //MARK: Overrides
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
     }
     
+    //MARK: Action
     @IBAction func signInButtonTapped(_ sender: Any) {
         guard let email = emailTextField.text, let password = passwordTextField.text else {
             return
@@ -36,6 +38,7 @@ class SignInViewController: UIViewController {
         self.dismiss(animated: true, completion: nil)
     }
     
+    //MARK: Methods
     private func presentAlert(title: String,message: String) {
         let alertVC = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let action = UIAlertAction(title: "OK", style: .cancel, handler: nil)

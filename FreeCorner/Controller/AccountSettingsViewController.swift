@@ -10,7 +10,7 @@ import FirebaseAuth
 import FirebaseDatabase
 
 class AccountSettingsViewController: UIViewController {
-    
+    //MARK: Outlets
     @IBOutlet weak var nameTextField: UITextField!
     @IBOutlet weak var lastNameTextField: UITextField!
     @IBOutlet weak var emailTextField: UITextField!
@@ -19,10 +19,12 @@ class AccountSettingsViewController: UIViewController {
     @IBOutlet weak var streetNameTextField: UITextField!
     @IBOutlet weak var zipCodeTextField: UITextField!
     @IBOutlet weak var cityNameTextField: UITextField!
-        
+    
+    //MARK: Variables
     let userRef = Database.database().reference(withPath: "users")
     var userId: String?
     
+    //MARK: Overrides
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -41,6 +43,7 @@ class AccountSettingsViewController: UIViewController {
         }
     }
     
+    //MARK: Actions
     @IBAction func updateButtonTapped(_ sender: Any) {
         guard let email = emailTextField.text, let firstName = nameTextField.text, let lastName = lastNameTextField.text, let phoneNumber = phoneNumberTextField.text, let streetNumber = streetNumberTextField.text, let streetName = streetNameTextField.text, let zipCode = zipCodeTextField.text, let cityName = cityNameTextField.text,let id = userId else {
             presentAlert(title: "Oups", message: "Something is wrong with your entries !")
@@ -65,6 +68,7 @@ class AccountSettingsViewController: UIViewController {
             
         }
     }
+    //MARK: Methods
     private func presentAlert(title: String,message: String) {
         let alertVC = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let action = UIAlertAction(title: "OK", style: .cancel, handler: nil)
