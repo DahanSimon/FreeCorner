@@ -44,6 +44,16 @@ class AccountSettingsViewController: UIViewController {
     }
     
     //MARK: Actions
+    @IBAction func hideKeyboard(_ sender: UITapGestureRecognizer) {
+        nameTextField.resignFirstResponder()
+        lastNameTextField.resignFirstResponder()
+        emailTextField.resignFirstResponder()
+        phoneNumberTextField.resignFirstResponder()
+        streetNameTextField.resignFirstResponder()
+        streetNumberTextField.resignFirstResponder()
+        zipCodeTextField.resignFirstResponder()
+        cityNameTextField.resignFirstResponder()
+    }
     @IBAction func updateButtonTapped(_ sender: Any) {
         guard let email = emailTextField.text, let firstName = nameTextField.text, let lastName = lastNameTextField.text, let phoneNumber = phoneNumberTextField.text, let streetNumber = streetNumberTextField.text, let streetName = streetNameTextField.text, let zipCode = zipCodeTextField.text, let cityName = cityNameTextField.text,let id = userId else {
             presentAlert(title: "Oups", message: "Something is wrong with your entries !")
@@ -74,6 +84,9 @@ class AccountSettingsViewController: UIViewController {
         let action = UIAlertAction(title: "OK", style: .cancel, handler: nil)
         alertVC.addAction(action)
         self.present(alertVC, animated: true, completion: nil)
+    }
+    deinit {
+        print("account settings deinited")
     }
 }
 extension AccountSettingsViewController: UITextFieldDelegate {

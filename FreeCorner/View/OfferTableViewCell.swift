@@ -47,7 +47,6 @@ class OfferTableViewCell: UITableViewCell {
         offerName.text = name
         activityIndicator.frame = self.offerPicture.bounds
         offerPicture.addSubview(activityIndicator)
-//        offerPicture.load(url: imageUrl, activyIndicator: activityIndicator, parentView: offerPicture)
         offerPicture.kf.indicatorType = .activity
         offerPicture.kf.setImage(with: imageUrl, placeholder: nil, options: nil)
     }

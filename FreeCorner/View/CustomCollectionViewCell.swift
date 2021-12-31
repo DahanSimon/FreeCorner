@@ -14,7 +14,6 @@ class CustomCollectionViewCell: UICollectionViewCell {
     func configure(imageUrl: String){
         activityIndicator.frame = self.offerPicture.bounds
         offerPicture.addSubview(activityIndicator)
-//        offerPicture.isHidden = true
         if let url = URL(string: imageUrl) {
             offerPicture.kf.indicatorType = .activity
             offerPicture.kf.setImage(with: url, placeholder: nil, options: nil)

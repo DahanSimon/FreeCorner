@@ -27,7 +27,6 @@ class OffersListViewController: UIViewController {
     var offers: [String: Offer] {
         return FireBaseService.offers
     }
-
     var offersIds: [String] {
         var ids: [String] = []
         if isFiltered {
@@ -52,14 +51,14 @@ class OffersListViewController: UIViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "offerDetailsSegue"{
-            var reversedOffers: [String: Offer] {
+            var offers: [String: Offer] {
                 if isFiltered {
                     return filteredOffers
                 }
-                return offers
+                return self.offers
             }
             let recipeVC = segue.destination as? OfferDetailsViewController
-            recipeVC?.selectedOffer = reversedOffers[selectedOfferIndex]
+            recipeVC?.selectedOffer = offers[selectedOfferIndex]
         }
     }
     
@@ -70,10 +69,16 @@ class OffersListViewController: UIViewController {
                 self.tableView.reloadData()
             }
         }
+        FireBaseService.getUsers { success in
+            if success {
+                        self.tableView.reloadData()
+            }
+        }
+        
     }
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        tableView.frame = view.bounds
+//        tableView.frame = view.bounds
     }
     
     //MARK: Actions
@@ -81,17 +86,14 @@ class OffersListViewController: UIViewController {
         guard let filter = sender as? UIAction else {
             return
         }
+        if filter.title == "All"{
+            isFiltered = false
+            tableView.reloadData()
+            return
+        }
         self.isFiltered = true
-        offersRef.queryOrdered(byChild: "category").queryEqual(toValue: filter.title).observe(.value) { snapshot in
-            var filteredOffers: [String: Offer] = [:]
-            for child in snapshot.children {
-                if
-                    let snapshot = child as? DataSnapshot,
-                    let offer = Offer(snapshot: snapshot) {
-                    filteredOffers[offer.key] = offer
-                }
-            }
-            self.filteredOffers = filteredOffers
+        FireBaseService.filterItemsByCategory(category: filter.title) { result in
+            self.filteredOffers = result
             if !self.users.isEmpty {
                 self.tableView.reloadData()
             }
@@ -110,7 +112,7 @@ class OffersListViewController: UIViewController {
         self.present(alertVC, animated: true, completion: nil)
     }
     
-    fileprivate func setUpFilterMenu() {
+    func setUpFilterMenu() {
         filterButton.showsMenuAsPrimaryAction = true
         var actionArray: [UIAction] = []
         for category in Categories.allCases {
@@ -119,27 +121,36 @@ class OffersListViewController: UIViewController {
         }
         filterButton.menu = UIMenu(children: actionArray)
     }
-    
-    func getOffers() -> [String: Offer] {
+    func getSortedKeys(_ dict: [String: Offer]) -> [String] {
+        let keys: [String] = dict.keys.sorted()
+        return keys.reversed()
+    }
+    func getOffersKeys() -> [String] {
         if isFiltered {
-            return filteredOffers
+            let sortedOffers = filteredOffers.sorted { $0.key < $1.key }
+            print(sortedOffers)
+            return getSortedKeys(filteredOffers)
         }
-        return offers
+        return getSortedKeys(offers)
     }
 }
 
 extension OffersListViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return getOffers().count
+        return getOffersKeys().count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "OfferCell", for: indexPath) as? OfferTableViewCell else {
             return UITableViewCell()
         }
-        let offerId                      = offersIds[indexPath.row]
-        let offersList: [String: Offer]  = getOffers()
-        guard let userId = offersList[offerId]?.owner, let ownerLocation = users[userId]?.address, let ownerZipCode = ownerLocation["Postal Code"], let name = offersList[offerId]?.name, let firstImage = offersList[offerId]?.images[0], let imageURL = URL(string: firstImage) else {
+        if users.isEmpty {
+            return UITableViewCell()
+        }
+        let offersKeys                   = getOffersKeys()
+        let offerId                      = offersKeys[indexPath.row]
+//        let offersList: [String: Offer]  = getOffersKeys()
+        guard let userId = offers[offerId]?.owner, let ownerLocation = users[userId]?.address, let ownerZipCode = ownerLocation["Postal Code"], let name = offers[offerId]?.name, let firstImage = offers[offerId]?.images[0], let imageURL = URL(string: firstImage) else {
             return UITableViewCell()
         }
         cell.configure(name: name, location: "Zipcode: \n" + ownerZipCode, imageUrl: imageURL)
@@ -147,7 +158,9 @@ extension OffersListViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        self.selectedOfferIndex = offersIds[indexPath.row]
+        let offersKeys          = getOffersKeys()
+        self.selectedOfferIndex = offersKeys[indexPath.row]
+        textField.resignFirstResponder()
         performSegue(withIdentifier: "offerDetailsSegue", sender: self)
     }
 }
@@ -183,3 +196,11 @@ extension OffersListViewController: UITextFieldDelegate {
 }
 
 
+extension OffersListViewController: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        if touch.view?.isDescendant(of: self.tableView) == true {
+            return false
+        }
+        return true
+    }
+}

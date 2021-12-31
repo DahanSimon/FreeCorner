@@ -66,6 +66,10 @@ class MyOffersViewController: UIViewController, UpdateOfferDelegate {
         usersOffers[String(id)] = Offer(name: name, description: description, images: images, owner: owner, category: category, key: String(id))
         tableView.reloadData()
     }
+    
+    deinit {
+        print("my offers deinited")
+    }
 }
 
 extension MyOffersViewController: UITableViewDelegate, UITableViewDataSource {

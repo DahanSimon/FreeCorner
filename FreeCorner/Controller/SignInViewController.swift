@@ -15,7 +15,6 @@ class SignInViewController: UIViewController {
     //MARK: Overrides
     override func viewDidLoad() {
         super.viewDidLoad()
-
     }
     
     //MARK: Action
@@ -37,12 +36,18 @@ class SignInViewController: UIViewController {
     @IBAction func closeButtonTapped(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
     }
-    
+    @IBAction func hideKeyboard(_ sender: UITapGestureRecognizer) {
+        emailTextField.resignFirstResponder()
+        passwordTextField.resignFirstResponder()
+    }
     //MARK: Methods
     private func presentAlert(title: String,message: String) {
         let alertVC = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let action = UIAlertAction(title: "OK", style: .cancel, handler: nil)
         alertVC.addAction(action)
         self.present(alertVC, animated: true, completion: nil)
+    }
+    deinit {
+        print("sign in deinited")
     }
 }

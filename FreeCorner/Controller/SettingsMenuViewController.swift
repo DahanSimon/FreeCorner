@@ -44,7 +44,7 @@ class SettingsMenuViewController: UIViewController {
     }
     
     //MARK; Methods
-    fileprivate func isUserConnected() {
+    func isUserConnected() {
         if Auth.auth().currentUser == nil {
             performSegue(withIdentifier: "settingsToLoginSegue", sender: self)
         } else {

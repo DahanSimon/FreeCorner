@@ -35,6 +35,7 @@
 		6BD8DD71277B259E0069B0F7 /* AccountSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BD8DD70277B259E0069B0F7 /* AccountSettingsViewController.swift */; };
 		6BDA544B2777E12E001C90E2 /* PhotosListCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BDA544A2777E12E001C90E2 /* PhotosListCollectionViewCell.swift */; };
 		6BDA544D2777EBB8001C90E2 /* PhotosListCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6BDA544C2777EBB8001C90E2 /* PhotosListCollectionViewCell.xib */; };
+		A68F9F91B08AC3F13CF5C8C2 /* Pods_FreeCornerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CB660238C7D0B1EDA25C54 /* Pods_FreeCornerTests.framework */; };
 		F328BADDB11021BB94F5DE7C /* Pods_FreeCorner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 635FC109CCDAC3E650F1DD21 /* Pods_FreeCorner.framework */; };
 /* End PBXBuildFile section */
 
@@ -56,6 +57,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		313CA8CFD02829A2B1FB804D /* Pods-FreeCornerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FreeCornerTests.debug.xcconfig"; path = "Target Support Files/Pods-FreeCornerTests/Pods-FreeCornerTests.debug.xcconfig"; sourceTree = "<group>"; };
 		63222CEBC00C926F74E51408 /* Pods-FreeCorner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FreeCorner.debug.xcconfig"; path = "Target Support Files/Pods-FreeCorner/Pods-FreeCorner.debug.xcconfig"; sourceTree = "<group>"; };
 		635FC109CCDAC3E650F1DD21 /* Pods_FreeCorner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FreeCorner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6B192552276BF506006EF640 /* CustomCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -90,6 +92,8 @@
 		6BD8DD70277B259E0069B0F7 /* AccountSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSettingsViewController.swift; sourceTree = "<group>"; };
 		6BDA544A2777E12E001C90E2 /* PhotosListCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosListCollectionViewCell.swift; sourceTree = "<group>"; };
 		6BDA544C2777EBB8001C90E2 /* PhotosListCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PhotosListCollectionViewCell.xib; sourceTree = "<group>"; };
+		7B28F1893ECF93229A16156D /* Pods-FreeCornerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FreeCornerTests.release.xcconfig"; path = "Target Support Files/Pods-FreeCornerTests/Pods-FreeCornerTests.release.xcconfig"; sourceTree = "<group>"; };
+		B3CB660238C7D0B1EDA25C54 /* Pods_FreeCornerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FreeCornerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1DC9FC1E3273FCD7DF7CBF3 /* Pods-FreeCorner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FreeCorner.release.xcconfig"; path = "Target Support Files/Pods-FreeCorner/Pods-FreeCorner.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -106,6 +110,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A68F9F91B08AC3F13CF5C8C2 /* Pods_FreeCornerTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -123,6 +128,7 @@
 			isa = PBXGroup;
 			children = (
 				635FC109CCDAC3E650F1DD21 /* Pods_FreeCorner.framework */,
+				B3CB660238C7D0B1EDA25C54 /* Pods_FreeCornerTests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -236,6 +242,8 @@
 			children = (
 				63222CEBC00C926F74E51408 /* Pods-FreeCorner.debug.xcconfig */,
 				D1DC9FC1E3273FCD7DF7CBF3 /* Pods-FreeCorner.release.xcconfig */,
+				313CA8CFD02829A2B1FB804D /* Pods-FreeCornerTests.debug.xcconfig */,
+				7B28F1893ECF93229A16156D /* Pods-FreeCornerTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -266,9 +274,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6BCE1B56275FD607001AE7FD /* Build configuration list for PBXNativeTarget "FreeCornerTests" */;
 			buildPhases = (
+				F6649A75C4A466E86F9AA43B /* [CP] Check Pods Manifest.lock */,
 				6BCE1B3B275FD607001AE7FD /* Sources */,
 				6BCE1B3C275FD607001AE7FD /* Frameworks */,
 				6BCE1B3D275FD607001AE7FD /* Resources */,
+				7D23FD030994A748ED3D3372 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -408,6 +418,45 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-FreeCorner/Pods-FreeCorner-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		7D23FD030994A748ED3D3372 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-FreeCornerTests/Pods-FreeCornerTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-FreeCornerTests/Pods-FreeCornerTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-FreeCornerTests/Pods-FreeCornerTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F6649A75C4A466E86F9AA43B /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-FreeCornerTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -668,6 +717,7 @@
 		};
 		6BCE1B57275FD607001AE7FD /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 313CA8CFD02829A2B1FB804D /* Pods-FreeCornerTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -693,6 +743,7 @@
 		};
 		6BCE1B58275FD607001AE7FD /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7B28F1893ECF93229A16156D /* Pods-FreeCornerTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";

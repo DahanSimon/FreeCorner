@@ -16,4 +16,7 @@ class SuccessViewController: UIViewController {
     @IBAction func closeButtonTapped(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
     }
+    deinit {
+        print("success post deinited")
+    }
 }

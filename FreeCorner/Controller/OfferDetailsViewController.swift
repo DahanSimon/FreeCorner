@@ -25,6 +25,43 @@ class OfferDetailsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.descriptionLabel.text = selectedOffer?.desctiption
+        setUpMap()
+    }
+    //MARK: Actions
+    @IBAction func sendMessageButtonTapped(_ sender: Any) {
+        guard let selectedOffer = selectedOffer, let owner = users[selectedOffer.owner] else {
+            return
+        }
+
+        let composeVC = MFMessageComposeViewController()
+        composeVC.messageComposeDelegate = self
+        
+        // Configure the fields of the interface.
+        composeVC.recipients = [owner.phone]
+        composeVC.body       = "Hey! Your product on FreeCorner is still available ? \nThank you !"
+        
+        // Present the view controller modally.
+        if MFMessageComposeViewController.canSendText() {
+            self.present(composeVC, animated: true, completion: nil)
+        }
+    }
+    @IBAction func phoneButtonTapped(_ sender: Any) {
+        guard let selectedOffer = self.selectedOffer else {
+            return
+        }
+        let phoneNumber = users[selectedOffer.owner]!.phone
+        if !phoneNumber.isEmpty {
+            if let url = URL(string: "tel://" + phoneNumber) {
+                if UIApplication.shared.canOpenURL(url) {
+                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                }
+            }
+        }
+    }
+    deinit {
+        print("offer details deinited")
+    }
+    func setUpMap() {
         guard let selectedOffer = self.selectedOffer,let owner = users[selectedOffer.owner], let postalCode = owner.address["Postal Code"], let cityName = owner.address["City Name"] else {
             return
         }
@@ -46,37 +83,6 @@ class OfferDetailsViewController: UIViewController {
                 discipline: "",
                 coordinate: CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude))
             self.mapView.addAnnotation(artwork)
-        }
-    }
-    //MARK: Actions
-    @IBAction func sendMessageButtonTapped(_ sender: Any) {
-        guard let selectedOffer = selectedOffer, let owner = users[selectedOffer.owner] else {
-            return
-        }
-
-        let composeVC = MFMessageComposeViewController()
-        composeVC.messageComposeDelegate = self
-        
-        // Configure the fields of the interface.
-        composeVC.recipients = [owner.phone]
-        composeVC.body       = "Hey! Your product on FreeKorner is still available ? \nThank you !"
-        
-        // Present the view controller modally.
-        if MFMessageComposeViewController.canSendText() {
-            self.present(composeVC, animated: true, completion: nil)
-        }
-    }
-    @IBAction func phoneButtonTapped(_ sender: Any) {
-        guard let selectedOffer = self.selectedOffer else {
-            return
-        }
-        let phoneNumber = users[selectedOffer.owner]!.phone
-        if !phoneNumber.isEmpty {
-            if let url = URL(string: "tel://" + phoneNumber) {
-                if UIApplication.shared.canOpenURL(url) {
-                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                }
-            }
         }
     }
 }
@@ -106,5 +112,6 @@ extension OfferDetailsViewController: MFMessageComposeViewControllerDelegate {
     func messageComposeViewController(_ controller: MFMessageComposeViewController, didFinishWith result: MessageComposeResult) {
         self.dismiss(animated: true, completion: nil)
     }
+    
 }
 

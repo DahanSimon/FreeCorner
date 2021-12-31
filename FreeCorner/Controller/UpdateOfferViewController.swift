@@ -12,11 +12,11 @@ import FirebaseDatabase
 import FirebaseAuth
 import FirebaseStorage
 
-protocol UpdateOfferDelegate {
+protocol UpdateOfferDelegate: AnyObject {
     func didUpdateOffer(name: String, id: Int, description: String, images: [String], owner: String, category: String)
 }
 
-class UpdateOfferViewController: UIViewController, UIImagePickerControllerDelegate & UINavigationControllerDelegate {
+class UpdateOfferViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
     //MARK: Outlets
     @IBOutlet weak var collectionView: UICollectionView!
@@ -30,9 +30,9 @@ class UpdateOfferViewController: UIViewController, UIImagePickerControllerDelega
     let offerRef    = Database.database().reference(withPath: "offers")
     let userRef     = Database.database().reference(withPath: "users")
     let userId      = Auth.auth().currentUser?.uid
-    var updateOfferDelegate: UpdateOfferDelegate!
+    weak var updateOfferDelegate: UpdateOfferDelegate!
     var selectedOfferIndex: String?
-    var selectedOffer: Offer?
+    weak var selectedOffer: Offer?
     var usersOffersIds: [String]?
     var offers: [String: Offer] {
         collectionView.reloadData()
@@ -43,6 +43,7 @@ class UpdateOfferViewController: UIViewController, UIImagePickerControllerDelega
         super.viewDidLoad()
         NotificationCenter.default.addObserver(self, selector: #selector(notificationReceived(_:)), name: Notification.Name("deletedImage"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(addImageNotificationReceived), name: Notification.Name("addImage"), object: nil)
+        collectionView.reloadData()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -53,6 +54,10 @@ class UpdateOfferViewController: UIViewController, UIImagePickerControllerDelega
     }
     
     //MARK: Actions
+    @IBAction func hideKeyboard(_ sender: UITapGestureRecognizer) {
+        nameTextField.resignFirstResponder()
+        descriptionTextField.resignFirstResponder()
+    }
     @IBAction func updateButtonTapped(_ sender: UIButton) {
         guard let name = nameTextField.text, let description = descriptionTextField.text, let selectedOffer = selectedOffer  else {
             return
@@ -62,20 +67,22 @@ class UpdateOfferViewController: UIViewController, UIImagePickerControllerDelega
         FireBaseService.getOffers { success in
             
         }
-        FireBaseService.getUsers()
+        FireBaseService.getUsers { _ in }
         self.dismiss(animated: true, completion: nil)
     }
     @objc func notificationReceived(_ notification: NSNotification) {
-        let index = notification.object as! Int
-        FireBaseService.offers[selectedOffer!.key]?.images.remove(at: index)
-        collectionView.reloadData()
+            let index = notification.object as! Int
+            selectedOffer?.images.remove(at: index)
+            collectionView.reloadData()
     }
     @objc func addImageNotificationReceived() {
+        if self.isViewLoaded {
+            let picker = UIImagePickerController()
+                picker.allowsEditing = true
+                picker.delegate = self
+                present(picker, animated: true)
+        }
         
-        let picker = UIImagePickerController()
-            picker.allowsEditing = true
-            picker.delegate = self
-            present(picker, animated: true)
     }
     //MARK: Methods
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
@@ -103,6 +110,9 @@ class UpdateOfferViewController: UIViewController, UIImagePickerControllerDelega
                 self.updateButton.isHidden = false
             }
         }
+    }
+    deinit {
+        print("update offer deinited")
     }
 }
 extension UpdateOfferViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {

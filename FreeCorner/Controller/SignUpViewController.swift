@@ -55,6 +55,17 @@ class SignUpViewController: UIViewController,UITextFieldDelegate {
             self.completionHandler?()
         }
     }
+    @IBAction func hideKeyboard(_ sender: UITapGestureRecognizer) {
+        firstNameTextField.resignFirstResponder()
+        lastNameTextField.resignFirstResponder()
+        emailTextField.resignFirstResponder()
+        passwordTextField.resignFirstResponder()
+        zipCodeTextField.resignFirstResponder()
+        streetNameTextField.resignFirstResponder()
+        streetNumberTextField.resignFirstResponder()
+        phoneNumberTextField.resignFirstResponder()
+        cityNameTextField.resignFirstResponder()
+    }
     @IBAction func signInButtonTapped(_ sender: Any) {
         let signInVC = SignInViewController()
         signInVC.modalPresentationStyle = .fullScreen
@@ -72,5 +83,8 @@ class SignUpViewController: UIViewController,UITextFieldDelegate {
         let action = UIAlertAction(title: "OK", style: .cancel, handler: nil)
         alertVC.addAction(action)
         self.present(alertVC, animated: true, completion: nil)
+    }
+    deinit {
+        print("sign up deinited")
     }
 }

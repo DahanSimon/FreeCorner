@@ -32,7 +32,7 @@ class FireBaseService {
             self.refObservers.append(completed)
         })
     }
-    static func getUsers() {
+    static func getUsers(callback: @escaping (Bool) -> Void) {
         userRef.observe(.value, with: { snapshot in
             let completed = userRef.observe(.value) { snapshot in
                 var newItems: [String: User] = [:]
@@ -44,9 +44,24 @@ class FireBaseService {
                     }
                 }
                 FireBaseService.users = newItems
+                callback(true)
             }
             self.refObservers.append(completed)
         })
+    }
+    static func filterItemsByCategory(category: String,callback: @escaping ([String: Offer]) -> Void) {
+        offersRef.queryOrdered(byChild: "category").queryEqual(toValue: category).observe(.value) { snapshot in
+            var filteredOffers: [String: Offer] = [:]
+            for child in snapshot.children {
+                if
+                    let snapshot = child as? DataSnapshot,
+                    let offer = Offer(snapshot: snapshot) {
+                    filteredOffers[offer.key] = offer
+                }
+            }
+            callback(filteredOffers)
+            
+        }        
     }
     func populateOffer(id:Int, name: String, description: String, images: [String],owner: String, category: String) {
             self.ref.child("offers/\(id)/name").setValue(name)
@@ -65,6 +80,7 @@ class FireBaseService {
                 self.ref.child("users/\(id)/email").setValue(email)
             }
     }
+    
     func deleteImage(offersId: String, imageId: String) {
         FireBaseService.offersRef.child(offersId).child("images").child(imageId).removeValue()
     }

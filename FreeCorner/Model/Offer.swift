@@ -51,6 +51,7 @@ class Offer {
 }
 
 enum Categories: String, CaseIterable {
+    case all = "All"
     case smartphone = "Smartphone"
     case furniture = "Furniture"
     case other = "Other"

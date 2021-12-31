@@ -23,7 +23,6 @@ class PhotosListCollectionViewCell: UICollectionViewCell {
         button.isHidden = false
         activityIndicator.frame = self.offerPicture.bounds
         offerPicture.addSubview(activityIndicator)
-//        offerPicture.isHidden = true
         if let url = URL(string: imageUrl) {
             offerPicture.kf.indicatorType = .activity
             offerPicture.kf.setImage(with: url, placeholder: nil, options: nil)
@@ -36,12 +35,19 @@ class PhotosListCollectionViewCell: UICollectionViewCell {
         button.isHidden = true
     }
     @IBAction func addImageButtonTapped(_ sender: Any) {
+        if let _ = self.parentContainerViewController() as? PostOfferViewController {
+            NotificationCenter.default.post(name: Notification.Name("addImagePostOffer"), object: index)
+            return
+        }
         NotificationCenter.default.post(name: Notification.Name("addImage"), object: index)
-       
     }
     
     
     @IBAction func deleteButtonTapped(_ sender: Any) {
+        if let _ = self.parentContainerViewController() as? PostOfferViewController {
+            NotificationCenter.default.post(name: Notification.Name("deletedImagePostOffer"), object: index)
+            return
+        }
         NotificationCenter.default.post(name: Notification.Name("deletedImage"), object: index)
     }
     static func nib() -> UINib {
