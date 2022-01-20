@@ -13,19 +13,19 @@ import FirebaseAuth
 import FirebaseStorage
 
 protocol UpdateOfferDelegate: AnyObject {
-    func didUpdateOffer(name: String, id: Int, description: String, images: [String], owner: String, category: String)
+    func didUpdateOffer(name: String, id: String, description: String, images: [String], owner: String, category: String)
 }
 
 class UpdateOfferViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
-    //MARK: Outlets
+    // MARK: Outlets
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var nameTextField: UITextField!
     @IBOutlet weak var descriptionTextField: UITextField!
     @IBOutlet weak var categoryPickerView: UIPickerView!
     @IBOutlet weak var updateButton: UIButton!
     
-    //MARK: Variables
+    // MARK: Variables
     let storage     = Storage.storage().reference()
     let offerRef    = Database.database().reference(withPath: "offers")
     let userRef     = Database.database().reference(withPath: "users")
@@ -34,11 +34,9 @@ class UpdateOfferViewController: UIViewController, UIImagePickerControllerDelega
     var selectedOfferIndex: String?
     weak var selectedOffer: Offer?
     var usersOffersIds: [String]?
-    var offers: [String: Offer] {
-        collectionView.reloadData()
-        return FireBaseService.offers
-    }
-    //MARK: Overrides
+    var offers: [String: Offer] = FireBaseService.shared.offers
+    
+    // MARK: Overrides
     override func viewDidLoad() {
         super.viewDidLoad()
         NotificationCenter.default.addObserver(self, selector: #selector(notificationReceived(_:)), name: Notification.Name("deletedImage"), object: nil)
@@ -51,9 +49,10 @@ class UpdateOfferViewController: UIViewController, UIImagePickerControllerDelega
         collectionView.register(PhotosListCollectionViewCell.nib(), forCellWithReuseIdentifier: "PhotosListCollectionViewCell")
         nameTextField.text = selectedOffer?.name
         descriptionTextField.text = selectedOffer?.desctiption
+        self.collectionView.reloadData()
     }
     
-    //MARK: Actions
+    // MARK: Actions
     @IBAction func hideKeyboard(_ sender: UITapGestureRecognizer) {
         nameTextField.resignFirstResponder()
         descriptionTextField.resignFirstResponder()
@@ -63,15 +62,19 @@ class UpdateOfferViewController: UIViewController, UIImagePickerControllerDelega
             return
         }
         
-        updateOfferDelegate.didUpdateOffer(name: name, id: Int(selectedOffer.key)!, description: description, images: selectedOffer.images, owner: userId!, category: Categories.allCases[categoryPickerView.selectedRow(inComponent: 0)].rawValue)
-        FireBaseService.getOffers { success in
-            
-        }
-        FireBaseService.getUsers { _ in }
+        updateOfferDelegate.didUpdateOffer(name: name,
+                                           id: selectedOffer.key,
+                                           description: description,
+                                           images: selectedOffer.images,
+                                           owner: userId!,
+                                           category: Categories.allCases[categoryPickerView.selectedRow(inComponent: 0)].rawValue)
+        
         self.dismiss(animated: true, completion: nil)
     }
     @objc func notificationReceived(_ notification: NSNotification) {
-            let index = notification.object as! Int
+        guard let index = notification.object as? Int else {
+            return
+        }
             selectedOffer?.images.remove(at: index)
             collectionView.reloadData()
     }
@@ -84,8 +87,8 @@ class UpdateOfferViewController: UIViewController, UIImagePickerControllerDelega
         }
         
     }
-    //MARK: Methods
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+    // MARK: Methods
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         picker.dismiss(animated: true, completion: nil)
         updateButton.isHidden = true
         guard let image = info[UIImagePickerController.InfoKey.editedImage] as? UIImage else {
@@ -105,7 +108,7 @@ class UpdateOfferViewController: UIViewController, UIImagePickerControllerDelega
                     return
                 }
                 let string = url.absoluteString
-                FireBaseService.offers[self.selectedOffer!.key]?.images.append(string)
+                FireBaseService.shared.offers[self.selectedOffer!.key]?.images.append(string)
                 self.collectionView.reloadData()
                 self.updateButton.isHidden = false
             }
@@ -117,15 +120,19 @@ class UpdateOfferViewController: UIViewController, UIImagePickerControllerDelega
 }
 extension UpdateOfferViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return ((selectedOffer?.images.count)! + 1)
+        guard let offerImagesCount = selectedOffer?.images.count else {
+            return 0
+        }
+        return (offerImagesCount + 1)
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotosListCollectionViewCell", for: indexPath) as? PhotosListCollectionViewCell,let selectedOffer = selectedOffer else {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotosListCollectionViewCell", for: indexPath) as? PhotosListCollectionViewCell,
+                let selectedOffer = selectedOffer else {
             return UICollectionViewCell()
         }
         if selectedOffer.images.count > indexPath.row {
-            cell.configure(imageUrl:selectedOffer.images[indexPath.row],index: indexPath.row, offersId: selectedOffer.key)
+            cell.configure(imageUrl: selectedOffer.images[indexPath.row], index: indexPath.row, offersId: selectedOffer.key)
         } else {
             cell.showAddImageButton()
         }
@@ -139,9 +146,14 @@ extension UpdateOfferViewController: UIPickerViewDelegate, UIPickerViewDataSourc
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return Categories.allCases.count
+        return Categories.allCases.count - 1
     }
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return Categories.allCases[row].rawValue
+        let categories = Categories.allCases
+        var categoriesToShow: [String] = []
+        for category in categories where category != .all {
+            categoriesToShow.append(category.rawValue)
+        }
+        return categoriesToShow[row]
     }
 }

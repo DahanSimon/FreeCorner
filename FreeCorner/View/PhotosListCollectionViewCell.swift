@@ -15,7 +15,7 @@ class PhotosListCollectionViewCell: UICollectionViewCell {
     var index: Int = 0
     var offersId: String = ""
     
-    func configure(imageUrl: String, index: Int, offersId: String){
+    func configure(imageUrl: String, index: Int, offersId: String) {
         self.index = index
         self.offersId = offersId
         addImageButton.isHidden = true
@@ -41,7 +41,6 @@ class PhotosListCollectionViewCell: UICollectionViewCell {
         }
         NotificationCenter.default.post(name: Notification.Name("addImage"), object: index)
     }
-    
     
     @IBAction func deleteButtonTapped(_ sender: Any) {
         if let _ = self.parentContainerViewController() as? PostOfferViewController {

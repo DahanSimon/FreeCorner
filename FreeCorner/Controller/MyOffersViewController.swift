@@ -9,10 +9,10 @@ import UIKit
 import FirebaseAuth
 import FirebaseDatabase
 class MyOffersViewController: UIViewController, UpdateOfferDelegate {
-    //MARK: Outlets
+    // MARK: Outlets
     @IBOutlet weak var tableView: UITableView!
     
-    //MARK: Variables
+    // MARK: Variables
     var usersOffers: [String: Offer]    = [:]
     var usersOffersIds: [String]        = []
     let userId                          = Auth.auth().currentUser!.uid
@@ -21,7 +21,7 @@ class MyOffersViewController: UIViewController, UpdateOfferDelegate {
     var refObservers: [DatabaseHandle]  = []
     var selectedOffer: Offer?
     
-    //MARK: Overrides
+    // MARK: Overrides
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.rowHeight = 70
@@ -60,9 +60,9 @@ class MyOffersViewController: UIViewController, UpdateOfferDelegate {
         }
     }
     
-    //MARK: Methods
-    func didUpdateOffer(name: String, id: Int, description: String, images: [String], owner: String, category: String) {
-        FireBaseService().populateOffer(id: id, name: name, description: description, images: images, owner: owner, category: category)
+    // MARK: Methods
+    func didUpdateOffer(name: String, id: String, description: String, images: [String], owner: String, category: String) {
+        FireBaseService.shared.populateOffer(id: id, name: name, description: description, images: images, owner: owner, category: category)
         usersOffers[String(id)] = Offer(name: name, description: description, images: images, owner: owner, category: category, key: String(id))
         tableView.reloadData()
     }
@@ -82,7 +82,7 @@ extension MyOffersViewController: UITableViewDelegate, UITableViewDataSource {
             return UITableViewCell()
         }
         
-        if (usersOffers.count == usersOffersIds.count) && usersOffersIds.count != 0{
+        if (usersOffers.count == usersOffersIds.count) && usersOffersIds.count != 0 {
             let offersId = usersOffersIds[indexPath.row]
             cell.textLabel!.text = usersOffers[String(offersId)]?.name
         }

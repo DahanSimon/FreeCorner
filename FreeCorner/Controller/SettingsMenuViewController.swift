@@ -10,7 +10,7 @@ import FirebaseAuth
 
 class SettingsMenuViewController: UIViewController {
     
-    //MARK: Outlets
+    // MARK: Outlets
     @IBOutlet weak var myOffersButton: UIButton!
     @IBOutlet weak var accountSettingsButton: UIButton!
     @IBOutlet weak var logButton: UIButton!
@@ -19,7 +19,7 @@ class SettingsMenuViewController: UIViewController {
         isUserConnected()
     }
 
-    //MARK: Overrides
+    // MARK: Overrides
     override func viewWillAppear(_ animated: Bool) {
         isUserConnected()
     }
@@ -32,7 +32,7 @@ class SettingsMenuViewController: UIViewController {
         }
     }
     
-    //MARK: Actions
+    // MARK: Actions
     @IBAction func logOut(_ sender: UIButton) {
         if Auth.auth().currentUser == nil {
             performSegue(withIdentifier: "settingsToLoginSegue", sender: self)
@@ -43,7 +43,7 @@ class SettingsMenuViewController: UIViewController {
         try? Auth.auth().signOut()
     }
     
-    //MARK; Methods
+    // MARK: Methods
     func isUserConnected() {
         if Auth.auth().currentUser == nil {
             performSegue(withIdentifier: "settingsToLoginSegue", sender: self)

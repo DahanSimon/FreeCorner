@@ -21,6 +21,8 @@
 		6B6736BF276FCEA100B7BA38 /* SuccessViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B6736BE276FCEA100B7BA38 /* SuccessViewController.swift */; };
 		6B6736C12770CD4400B7BA38 /* Artwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B6736C02770CD4400B7BA38 /* Artwork.swift */; };
 		6B7EF7E9276BA89600176E79 /* OfferDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B7EF7E8276BA89600176E79 /* OfferDetailsViewController.swift */; };
+		6B921BF5277F40A5008A1B24 /* MockFireBaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B921BF4277F40A5008A1B24 /* MockFireBaseService.swift */; };
+		6B921BF7277F40E3008A1B24 /* FireBaseServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B921BF6277F40E3008A1B24 /* FireBaseServiceProtocol.swift */; };
 		6BCBAD8D2768BBE200DCBE5B /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BCBAD8C2768BBE200DCBE5B /* User.swift */; };
 		6BCE1B2D275FD605001AE7FD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BCE1B2C275FD605001AE7FD /* AppDelegate.swift */; };
 		6BCE1B2F275FD605001AE7FD /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BCE1B2E275FD605001AE7FD /* SceneDelegate.swift */; };
@@ -74,6 +76,10 @@
 		6B6736BE276FCEA100B7BA38 /* SuccessViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuccessViewController.swift; sourceTree = "<group>"; };
 		6B6736C02770CD4400B7BA38 /* Artwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Artwork.swift; sourceTree = "<group>"; };
 		6B7EF7E8276BA89600176E79 /* OfferDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfferDetailsViewController.swift; sourceTree = "<group>"; };
+		6B921BF2277F3CFE008A1B24 /* Montserrat-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Regular.ttf"; sourceTree = "<group>"; };
+		6B921BF3277F3CFE008A1B24 /* Montserrat-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-SemiBold.ttf"; sourceTree = "<group>"; };
+		6B921BF4277F40A5008A1B24 /* MockFireBaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockFireBaseService.swift; sourceTree = "<group>"; };
+		6B921BF6277F40E3008A1B24 /* FireBaseServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireBaseServiceProtocol.swift; sourceTree = "<group>"; };
 		6BCBAD8C2768BBE200DCBE5B /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		6BCE1B29275FD605001AE7FD /* FreeCorner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FreeCorner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6BCE1B2C275FD605001AE7FD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -139,6 +145,7 @@
 				6B36A389276014EA00A576E3 /* FireBaseService.swift */,
 				6BCBAD8C2768BBE200DCBE5B /* User.swift */,
 				6B64A74027611ED200B435B8 /* Offer.swift */,
+				6B921BF6277F40E3008A1B24 /* FireBaseServiceProtocol.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -177,6 +184,8 @@
 		6B36A38827600C3C00A576E3 /* Support */ = {
 			isa = PBXGroup;
 			children = (
+				6B921BF2277F3CFE008A1B24 /* Montserrat-Regular.ttf */,
+				6B921BF3277F3CFE008A1B24 /* Montserrat-SemiBold.ttf */,
 				6BCE1B2C275FD605001AE7FD /* AppDelegate.swift */,
 				6BCE1B2E275FD605001AE7FD /* SceneDelegate.swift */,
 				6BCE1B35275FD607001AE7FD /* Assets.xcassets */,
@@ -224,6 +233,7 @@
 			isa = PBXGroup;
 			children = (
 				6BCE1B43275FD607001AE7FD /* FreeCornerTests.swift */,
+				6B921BF4277F40A5008A1B24 /* MockFireBaseService.swift */,
 			);
 			path = FreeCornerTests;
 			sourceTree = "<group>";
@@ -260,6 +270,7 @@
 				6BCE1B26275FD605001AE7FD /* Frameworks */,
 				6BCE1B27275FD605001AE7FD /* Resources */,
 				74647C39B5C7A636B2FA9C1B /* [CP] Embed Pods Frameworks */,
+				6BFF79A327999F7000EE2BA9 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -403,6 +414,23 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		6BFF79A327999F7000EE2BA9 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint >/dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+		};
 		74647C39B5C7A636B2FA9C1B /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -470,6 +498,7 @@
 				6B64A74327612AF500B435B8 /* OfferTableViewCell.swift in Sources */,
 				6B192553276BF506006EF640 /* CustomCollectionViewCell.swift in Sources */,
 				6BCE1B31275FD605001AE7FD /* OffersListViewController.swift in Sources */,
+				6B921BF7277F40E3008A1B24 /* FireBaseServiceProtocol.swift in Sources */,
 				6B6736BF276FCEA100B7BA38 /* SuccessViewController.swift in Sources */,
 				6BCE1B2D275FD605001AE7FD /* AppDelegate.swift in Sources */,
 				6B36A38A276014EA00A576E3 /* FireBaseService.swift in Sources */,
@@ -493,6 +522,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6B921BF5277F40A5008A1B24 /* MockFireBaseService.swift in Sources */,
 				6BCE1B44275FD607001AE7FD /* FreeCornerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

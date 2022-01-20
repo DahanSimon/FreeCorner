@@ -11,23 +11,23 @@ import CoreLocation
 import MessageUI
 class OfferDetailsViewController: UIViewController {
     
-    //MARK: Outlets
+    // MARK: Outlets
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var collectionView: UICollectionView!
     
-    //MARK: Variables
+    // MARK: Variables
     var selectedOffer: Offer?
     var users: [String: User] {
-        return FireBaseService.users
+        return FireBaseService.shared.users
     }
-    //MARK: Overrides
+    // MARK: Overrides
     override func viewDidLoad() {
         super.viewDidLoad()
         self.descriptionLabel.text = selectedOffer?.desctiption
         setUpMap()
     }
-    //MARK: Actions
+    // MARK: Actions
     @IBAction func sendMessageButtonTapped(_ sender: Any) {
         guard let selectedOffer = selectedOffer, let owner = users[selectedOffer.owner] else {
             return
@@ -62,12 +62,12 @@ class OfferDetailsViewController: UIViewController {
         print("offer details deinited")
     }
     func setUpMap() {
-        guard let selectedOffer = self.selectedOffer,let owner = users[selectedOffer.owner], let postalCode = owner.address["Postal Code"], let cityName = owner.address["City Name"] else {
+        guard let selectedOffer = self.selectedOffer, let owner = users[selectedOffer.owner], let postalCode = owner.address["Postal Code"], let cityName = owner.address["City Name"] else {
             return
         }
         
         let geoCoder = CLGeocoder()
-        geoCoder.geocodeAddressString(postalCode) { (placemarks, error) in
+        geoCoder.geocodeAddressString(postalCode) { (placemarks, _ ) in
             guard
                 let placemarks = placemarks,
                 let location   = placemarks.first?.location
@@ -98,7 +98,6 @@ extension OfferDetailsViewController: UICollectionViewDelegate, UICollectionView
         return offer.images.count
     }
     
-    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionCell", for: indexPath) as? CustomCollectionViewCell else {
             return UICollectionViewCell()
@@ -114,4 +113,3 @@ extension OfferDetailsViewController: MFMessageComposeViewControllerDelegate {
     }
     
 }
-

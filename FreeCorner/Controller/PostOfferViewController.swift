@@ -13,14 +13,15 @@ import OpalImagePicker
 import Photos
 import SwiftUI
 
-class PostOfferViewController: UIViewController{
-    //MARK: Variables
+class PostOfferViewController: UIViewController {
+    // MARK: Variables
     var usersOffersIds: [String: String] {
-        guard let id = Auth.auth().currentUser?.uid, let usersOffers = FireBaseService.users[id]?.offer else {
+        guard let id = Auth.auth().currentUser?.uid, let usersOffers = FireBaseService.shared.users[id]?.offers else {
             return [:]
         }
         return usersOffers
     }
+    let userId = Auth.auth().currentUser?.uid
     let offersRef                       = Database.database().reference(withPath: "offers")
     let usersRef                        = Database.database().reference(withPath: "users")
     var refObservers: [DatabaseHandle]  = []
@@ -31,20 +32,24 @@ class PostOfferViewController: UIViewController{
     var offerDescription: String?
     var category: Category?
     var offers: [String: Offer] {
-        return FireBaseService.offers
+        return FireBaseService.shared.offers
     }
+    var users: [String: User] {
+        return FireBaseService.shared.users
+    }
+    let offerId = UUID().uuidString
     
-    
-    //MARK: Outlets
+    // MARK: Outlets
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var nameTextField: UITextField!
     @IBOutlet weak var sendOfferButton: UIButton!
     @IBOutlet weak var descriptionTextField: UITextField!
     @IBOutlet weak var categoryPickerView: UIPickerView!
     
-    //MARK: Overrides
+    // MARK: Overrides
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         self.sendOfferButton.isHidden = true
     }
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -65,16 +70,17 @@ class PostOfferViewController: UIViewController{
         NotificationCenter.default.addObserver(self, selector: #selector(addImageNotificationReceived), name: Notification.Name("addImagePostOffer"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(notificationReceived(_:)), name: Notification.Name("deletedImagePostOffer"), object: nil)
         collectionView.register(PhotosListCollectionViewCell.nib(), forCellWithReuseIdentifier: "PhotosListCollectionViewCell")
-        FireBaseService.getOffers { _ in }
     }
-    //MARK: Actions
+    // MARK: Actions
     @objc func notificationReceived(_ notification: NSNotification) {
-        let index = notification.object as! Int
-            imagesUrl.remove(at: index)
-            collectionView.reloadData()
-            if imagesUrl.isEmpty {
-                sendOfferButton.isHidden = true
-            }
+        guard let index = notification.object as? Int else {
+            return
+        }
+        imagesUrl.remove(at: index)
+        collectionView.reloadData()
+        if imagesUrl.isEmpty {
+            sendOfferButton.isHidden = true
+        }
     }
     @objc func addImageNotificationReceived() {
         if self.isViewLoaded {
@@ -94,19 +100,19 @@ class PostOfferViewController: UIViewController{
         }
     }
     @IBAction func sendOfferButtonTapped(_ sender: Any) {
-        guard let user = Auth.auth().currentUser?.uid, let name = nameTextField.text, let description = descriptionTextField.text, let idInt = Int(getNewImageId()) else {
+        guard let user = Auth.auth().currentUser?.uid, let name = nameTextField.text, let description = descriptionTextField.text else {
             return
         }
-        var offers = self.usersOffersIds
-        offers[String(idInt + 1)] = name
+        
+        var offers: [String: String] = users[userId!]?.offers ?? [:]
+        offers[offerId] = name
         self.usersRef.child("\(user)/offers").setValue(offers)
         let category = Categories.allCases[categoryPickerView.selectedRow(inComponent: 0)]
-        FireBaseService().populateOffer(id: idInt + 1, name: name, description: description, images: imagesUrl, owner: user, category: category.rawValue)
-        
+        FireBaseService.shared.populateOffer(id: offerId, name: name, description: description, images: imagesUrl, owner: user, category: category.rawValue)
         reset()
     }
     
-    //MARK: Methods
+    // MARK: Methods
     func sendData(image: UIImage, index: Int) {
         guard let imageData = image.pngData() else {
             return
@@ -147,14 +153,18 @@ class PostOfferViewController: UIViewController{
         options.resizeMode         = .exact
         options.normalizedCropRect = cropRect
         
-        manager.requestImage(for: asset, targetSize: retinaSquare, contentMode: .aspectFit, options: options, resultHandler: {(result, info)->Void in
+        manager.requestImage(for: asset,
+                                targetSize: retinaSquare,
+                                contentMode: .aspectFit,
+                                options: options,
+                                resultHandler: {(result, _) -> Void in
             thumbnail = result!
         })
         return thumbnail
     }
-    func showAlert(Title : String!, Message : String!)  -> UIAlertController {
-        let alertController : UIAlertController = UIAlertController(title: Title, message: Message, preferredStyle: .alert)
-        let okAction : UIAlertAction = UIAlertAction(title: "Ok", style: .default) { (alert) in
+    func showAlert(title: String!, message: String!) -> UIAlertController {
+        let alertController: UIAlertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let okAction: UIAlertAction = UIAlertAction(title: "Ok", style: .default) { (_) in
             print("User pressed ok function")
             
         }
@@ -173,32 +183,39 @@ class PostOfferViewController: UIViewController{
         collectionView.reloadData()
     }
     
-    func getNewImageId() -> String {
+    func getNewImageId() -> Int {
         let ids = offers.keys
         var id: String = "0"
-        for key in ids {
-            if key > id {
-                id = key
-            }
+        for key in ids where key > id {
+            id = key
         }
-        return id
+        if id != "0" {
+            return Int(id)! + 1
+        } else {
+            return 0
+        }
+        
     }
 }
-extension PostOfferViewController:  UIPickerViewDelegate, UIPickerViewDataSource {
+extension PostOfferViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return Categories.allCases.count
+        return Categories.allCases.count - 1
     }
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        pickerView.setValue(UIColor(red: 249, green: 251, blue: 178, alpha: 1), forKey: "textColor")
-        return Categories.allCases[row].rawValue
+        let categories = Categories.allCases
+        var categoriesToShow: [String] = []
+        for category in categories where category != .all {
+            categoriesToShow.append(category.rawValue)
+        }
+        return categoriesToShow[row]
     }
 }
 
-extension PostOfferViewController:  UICollectionViewDelegate, UICollectionViewDataSource,UICollectionViewDelegateFlowLayout {
+extension PostOfferViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return (imagesUrl.count + 1)
     }
@@ -208,8 +225,7 @@ extension PostOfferViewController:  UICollectionViewDelegate, UICollectionViewDa
             return UICollectionViewCell()
         }
         if imagesUrl.count > indexPath.row {
-            let id = getNewImageId()
-            cell.configure(imageUrl: imagesUrl[indexPath.row], index: indexPath.row, offersId: id)
+            cell.configure(imageUrl: imagesUrl[indexPath.row], index: indexPath.row, offersId: offerId)
         } else {
             cell.showAddImageButton()
         }
@@ -223,4 +239,3 @@ extension PostOfferViewController: UITextFieldDelegate {
         return true
     }
 }
-

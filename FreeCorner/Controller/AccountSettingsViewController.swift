@@ -10,7 +10,7 @@ import FirebaseAuth
 import FirebaseDatabase
 
 class AccountSettingsViewController: UIViewController {
-    //MARK: Outlets
+    // MARK: Outlets
     @IBOutlet weak var nameTextField: UITextField!
     @IBOutlet weak var lastNameTextField: UITextField!
     @IBOutlet weak var emailTextField: UITextField!
@@ -20,15 +20,15 @@ class AccountSettingsViewController: UIViewController {
     @IBOutlet weak var zipCodeTextField: UITextField!
     @IBOutlet weak var cityNameTextField: UITextField!
     
-    //MARK: Variables
+    // MARK: Variables
     let userRef = Database.database().reference(withPath: "users")
     var userId: String?
     
-    //MARK: Overrides
+    // MARK: Overrides
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if let id = Auth.auth().currentUser?.uid, let user = FireBaseService.users[id] {
+        if let id = Auth.auth().currentUser?.uid, let user = FireBaseService.shared.users[id] {
             self.userId = id
             let fullName = user.name.components(separatedBy: " ")
             let adress = user.address["Road Name"]?.components(separatedBy: " ")
@@ -43,7 +43,7 @@ class AccountSettingsViewController: UIViewController {
         }
     }
     
-    //MARK: Actions
+    // MARK: Actions
     @IBAction func hideKeyboard(_ sender: UITapGestureRecognizer) {
         nameTextField.resignFirstResponder()
         lastNameTextField.resignFirstResponder()
@@ -55,16 +55,29 @@ class AccountSettingsViewController: UIViewController {
         cityNameTextField.resignFirstResponder()
     }
     @IBAction func updateButtonTapped(_ sender: Any) {
-        guard let email = emailTextField.text, let firstName = nameTextField.text, let lastName = lastNameTextField.text, let phoneNumber = phoneNumberTextField.text, let streetNumber = streetNumberTextField.text, let streetName = streetNameTextField.text, let zipCode = zipCodeTextField.text, let cityName = cityNameTextField.text,let id = userId else {
+        guard let email = emailTextField.text,
+              let firstName = nameTextField.text,
+              let lastName = lastNameTextField.text,
+              let phoneNumber = phoneNumberTextField.text,
+              let streetNumber = streetNumberTextField.text,
+              let streetName = streetNameTextField.text,
+              let zipCode = zipCodeTextField.text,
+              let cityName = cityNameTextField.text,
+              let id = userId else {
             presentAlert(title: "Oups", message: "Something is wrong with your entries !")
             return
         }
-        FireBaseService().populateUser(id: id, name: firstName + " " + lastName, phone: phoneNumber, address: ["Road Name": streetNumber + " " + streetName,"Postal Code": zipCode,"City Name": cityName], offer: nil, email: email)
-        self.presentAlert(title: "Oups", message: "Account Updated !")
+        FireBaseService.shared.populateUser(id: id,
+                                            name: firstName + " " + lastName,
+                                            phone: phoneNumber,
+                                            address: ["Road Name": streetNumber + " " + streetName, "Postal Code": zipCode, "City Name": cityName],
+                                            offer: nil,
+                                            email: email)
+        self.presentAlert(title: "Done", message: "Account Updated !")
     }
     
     @IBAction func resetPasswordButtonTapped(_ sender: Any) {
-        guard let email = FireBaseService.users[userId!]?.email else {
+        guard let email = FireBaseService.shared.users[userId!]?.email else {
             self.presentAlert(title: "Oups", message: "Something Went Wrong")
             return
         }
@@ -78,8 +91,8 @@ class AccountSettingsViewController: UIViewController {
             
         }
     }
-    //MARK: Methods
-    private func presentAlert(title: String,message: String) {
+    // MARK: Methods
+    private func presentAlert(title: String, message: String) {
         let alertVC = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let action = UIAlertAction(title: "OK", style: .cancel, handler: nil)
         alertVC.addAction(action)

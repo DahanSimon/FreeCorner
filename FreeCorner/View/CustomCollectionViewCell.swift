@@ -11,7 +11,7 @@ class CustomCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var offerPicture: UIImageView!
     let activityIndicator = UIActivityIndicatorView()
     
-    func configure(imageUrl: String){
+    func configure(imageUrl: String) {
         activityIndicator.frame = self.offerPicture.bounds
         offerPicture.addSubview(activityIndicator)
         if let url = URL(string: imageUrl) {

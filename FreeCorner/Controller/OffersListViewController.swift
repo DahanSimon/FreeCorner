@@ -10,23 +10,17 @@ import FirebaseDatabase
 import FirebaseAuth
 class OffersListViewController: UIViewController {
     
-    //MARK: Outlets
+    // MARK: Outlets
     @IBOutlet weak var textField: UITextField!
     @IBOutlet weak var filterButton: UIButton!
     @IBOutlet weak var tableView: UITableView!
     
-    //MARK: Variables
-    let offersRef                      = Database.database().reference(withPath: "offers")
-    let usersRef                       = Database.database().reference(withPath: "users")
-    var filteredOffers: [String:Offer] = [:]
+    // MARK: Variables
+    var filteredOffers: [String: Offer] = [:]
     var isFiltered: Bool               = false
     var selectedOfferIndex: String     = "0"
-    var users: [String: User] {
-        return FireBaseService.users
-    }
-    var offers: [String: Offer] {
-        return FireBaseService.offers
-    }
+    var users: [String: User]  = [:]
+    var offers: [String: Offer] = [:]
     var offersIds: [String] {
         var ids: [String] = []
         if isFiltered {
@@ -34,14 +28,14 @@ class OffersListViewController: UIViewController {
                 ids.append(key)
             }
         } else {
-            for key in FireBaseService.offers.keys {
+            for key in offers.keys {
                 ids.append(key)
             }
         }
         return ids
     }
     
-    //MARK: Overrides
+    // MARK: Overrides
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpFilterMenu()
@@ -64,24 +58,21 @@ class OffersListViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-        FireBaseService.getOffers { success in
+        FireBaseService.shared.getOffers { offers, success in
             if success {
+                self.offers = offers
                 self.tableView.reloadData()
             }
         }
-        FireBaseService.getUsers { success in
+        FireBaseService.shared.getUsers {users, success in
             if success {
-                        self.tableView.reloadData()
+                self.users = users
+                self.tableView.reloadData()
             }
         }
-        
-    }
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-//        tableView.frame = view.bounds
     }
     
-    //MARK: Actions
+    // MARK: Actions
     @IBAction func filterButtonTapped(_ sender: Any) {
         guard let filter = sender as? UIAction else {
             return
@@ -92,20 +83,16 @@ class OffersListViewController: UIViewController {
             return
         }
         self.isFiltered = true
-        FireBaseService.filterItemsByCategory(category: filter.title) { result in
-            self.filteredOffers = result
-            if !self.users.isEmpty {
-                self.tableView.reloadData()
-            }
-        }
+        filteredOffers = Offer.filterItemsByCategory(category: filter.title, offers: offers)
+        tableView.reloadData()
     }
     
     @IBAction func hideKeyboard(_ sender: UITapGestureRecognizer) {
         textField.resignFirstResponder()
     }
     
-    //MARK: Methods
-    private func presentAlert(title: String,message: String) {
+    // MARK: Methods
+    private func presentAlert(title: String, message: String) {
         let alertVC = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
         let action = UIAlertAction(title: "OK", style: .cancel, handler: nil)
         alertVC.addAction(action)
@@ -144,13 +131,14 @@ extension OffersListViewController: UITableViewDataSource, UITableViewDelegate {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "OfferCell", for: indexPath) as? OfferTableViewCell else {
             return UITableViewCell()
         }
-        if users.isEmpty {
-            return UITableViewCell()
-        }
-        let offersKeys                   = getOffersKeys()
+        let offersKeys                   = self.getOffersKeys()
         let offerId                      = offersKeys[indexPath.row]
-//        let offersList: [String: Offer]  = getOffersKeys()
-        guard let userId = offers[offerId]?.owner, let ownerLocation = users[userId]?.address, let ownerZipCode = ownerLocation["Postal Code"], let name = offers[offerId]?.name, let firstImage = offers[offerId]?.images[0], let imageURL = URL(string: firstImage) else {
+        guard let userId = self.offers[offerId]?.owner,
+                let ownerLocation = FireBaseService.shared.users[userId]?.address,
+                let ownerZipCode = ownerLocation["Postal Code"],
+                let name = self.offers[offerId]?.name,
+                let firstImage = self.offers[offerId]?.images[0],
+                let imageURL = URL(string: firstImage) else {
             return UITableViewCell()
         }
         cell.configure(name: name, location: "Zipcode: \n" + ownerZipCode, imageUrl: imageURL)
@@ -178,7 +166,7 @@ extension OffersListViewController: UITextFieldDelegate {
         }
         self.isFiltered                     = true
         var filteredOffers: [String: Offer] = [:]
-        for offer in FireBaseService.offers.values {
+        for offer in FireBaseService.shared.offers.values {
             if offer.name.capitalized.contains(searchedItem.capitalized) {
                 filteredOffers[offer.key] = offer
             }
@@ -194,7 +182,6 @@ extension OffersListViewController: UITextFieldDelegate {
         return true
     }
 }
-
 
 extension OffersListViewController: UIGestureRecognizerDelegate {
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {

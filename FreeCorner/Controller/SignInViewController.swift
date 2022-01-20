@@ -8,21 +8,21 @@
 import UIKit
 import FirebaseAuth
 class SignInViewController: UIViewController {
-    //MARK: Outlets
+    // MARK: Outlets
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
     
-    //MARK: Overrides
+    // MARK: Overrides
     override func viewDidLoad() {
         super.viewDidLoad()
     }
     
-    //MARK: Action
+    // MARK: Action
     @IBAction func signInButtonTapped(_ sender: Any) {
         guard let email = emailTextField.text, let password = passwordTextField.text else {
             return
         }
-        Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
+        Auth.auth().signIn(withEmail: email, password: password) { _, error in
             if let error = error {
                 self.presentAlert(title: "error", message: error.localizedDescription)
                 print(error.localizedDescription)
@@ -30,8 +30,6 @@ class SignInViewController: UIViewController {
             }
             self.dismiss(animated: true, completion: nil)
         }
-        
-        
     }
     @IBAction func closeButtonTapped(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
@@ -40,8 +38,8 @@ class SignInViewController: UIViewController {
         emailTextField.resignFirstResponder()
         passwordTextField.resignFirstResponder()
     }
-    //MARK: Methods
-    private func presentAlert(title: String,message: String) {
+    // MARK: Methods
+    private func presentAlert(title: String, message: String) {
         let alertVC = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let action = UIAlertAction(title: "OK", style: .cancel, handler: nil)
         alertVC.addAction(action)
