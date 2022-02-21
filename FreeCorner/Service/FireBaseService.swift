@@ -18,7 +18,7 @@ class FireBaseService: FireBaseServiceProtocol {
     var users: [String: User] = [:]
     private init() {}
     
-    //The method updates the offers dictionnary by observing chnages on firebase realtime database
+    // This method updates the offers dictionnary by observing chnages on firebase realtime database
     func getOffers(callback: @escaping ([String: Offer], Bool) -> Void) {
         offersRef.observe(.value, with: { snapshot in
             var newItems: [String: Offer] = [:]
@@ -34,7 +34,7 @@ class FireBaseService: FireBaseServiceProtocol {
         })
     }
     
-    //The method updates the users dictionnary by observing chnages on firebase realtime database
+    // This method updates the users dictionnary by observing chnages on firebase realtime database
     func getUsers(callback: @escaping ([String: User], Bool) -> Void) {
         userRef.observe(.value, with: { snapshot in
             var newItems: [String: User] = [:]
@@ -66,7 +66,7 @@ class FireBaseService: FireBaseServiceProtocol {
         self.ref.child("users/\(id)/email").setValue(email)
     }
     
-    //This method delete images from the firebase realtime Database
+    // This method delete images from the firebase realtime Database
     func deleteImage(offersId: String, imageId: String) {
         offersRef.child(offersId).child("images").child(imageId).removeValue()
     }

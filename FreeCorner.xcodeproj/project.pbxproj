@@ -23,7 +23,6 @@
 		6B7EF7E9276BA89600176E79 /* OfferDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B7EF7E8276BA89600176E79 /* OfferDetailsViewController.swift */; };
 		6B83B2B227BBDB21007D2A32 /* User+Firebase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B83B2B127BBDB21007D2A32 /* User+Firebase.swift */; };
 		6B83B2B427BBF87F007D2A32 /* Offer+Firebase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B83B2B327BBF87F007D2A32 /* Offer+Firebase.swift */; };
-		6B83B2BB27C392ED007D2A32 /* FreeCornerUITests in Resources */ = {isa = PBXBuildFile; fileRef = 6B83B2BA27C392ED007D2A32 /* FreeCornerUITests */; };
 		6B921BF5277F40A5008A1B24 /* MockFireBaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B921BF4277F40A5008A1B24 /* MockFireBaseService.swift */; };
 		6B921BF7277F40E3008A1B24 /* FireBaseServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B921BF6277F40E3008A1B24 /* FireBaseServiceProtocol.swift */; };
 		6BCBAD8D2768BBE200DCBE5B /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BCBAD8C2768BBE200DCBE5B /* User.swift */; };
@@ -44,13 +43,6 @@
 
 /* Begin PBXContainerItemProxy section */
 		6BCE1B40275FD607001AE7FD /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6BCE1B21275FD605001AE7FD /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 6BCE1B28275FD605001AE7FD;
-			remoteInfo = FreeCorner;
-		};
-		6BCE1B4A275FD607001AE7FD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6BCE1B21275FD605001AE7FD /* Project object */;
 			proxyType = 1;
@@ -79,7 +71,6 @@
 		6B7EF7E8276BA89600176E79 /* OfferDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfferDetailsViewController.swift; sourceTree = "<group>"; };
 		6B83B2B127BBDB21007D2A32 /* User+Firebase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+Firebase.swift"; sourceTree = "<group>"; };
 		6B83B2B327BBF87F007D2A32 /* Offer+Firebase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Offer+Firebase.swift"; sourceTree = "<group>"; };
-		6B83B2BA27C392ED007D2A32 /* FreeCornerUITests */ = {isa = PBXFileReference; lastKnownFileType = folder; path = FreeCornerUITests; sourceTree = "<group>"; };
 		6B921BF2277F3CFE008A1B24 /* Montserrat-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Regular.ttf"; sourceTree = "<group>"; };
 		6B921BF3277F3CFE008A1B24 /* Montserrat-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-SemiBold.ttf"; sourceTree = "<group>"; };
 		6B921BF4277F40A5008A1B24 /* MockFireBaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockFireBaseService.swift; sourceTree = "<group>"; };
@@ -95,7 +86,6 @@
 		6BCE1B3A275FD607001AE7FD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6BCE1B3F275FD607001AE7FD /* FreeCornerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FreeCornerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6BCE1B43275FD607001AE7FD /* FreeCornerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreeCornerTests.swift; sourceTree = "<group>"; };
-		6BCE1B49275FD607001AE7FD /* FreeCornerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FreeCornerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6BD66B7E277A5DD1008AD35A /* SettingsMenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsMenuViewController.swift; sourceTree = "<group>"; };
 		6BD8DD70277B259E0069B0F7 /* AccountSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSettingsViewController.swift; sourceTree = "<group>"; };
 		6BDA544A2777E12E001C90E2 /* PhotosListCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosListCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -119,13 +109,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A68F9F91B08AC3F13CF5C8C2 /* Pods_FreeCornerTests.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		6BCE1B46275FD607001AE7FD /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -217,7 +200,6 @@
 			children = (
 				6BCE1B2B275FD605001AE7FD /* FreeCorner */,
 				6BCE1B42275FD607001AE7FD /* FreeCornerTests */,
-				6B83B2BA27C392ED007D2A32 /* FreeCornerUITests */,
 				6BCE1B2A275FD605001AE7FD /* Products */,
 				92FE36A4063C42E2DD79AB7A /* Pods */,
 				5FE13783D40F7CEC5FE640A5 /* Frameworks */,
@@ -229,7 +211,6 @@
 			children = (
 				6BCE1B29275FD605001AE7FD /* FreeCorner.app */,
 				6BCE1B3F275FD607001AE7FD /* FreeCornerTests.xctest */,
-				6BCE1B49275FD607001AE7FD /* FreeCornerUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -312,24 +293,6 @@
 			productReference = 6BCE1B3F275FD607001AE7FD /* FreeCornerTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		6BCE1B48275FD607001AE7FD /* FreeCornerUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 6BCE1B59275FD607001AE7FD /* Build configuration list for PBXNativeTarget "FreeCornerUITests" */;
-			buildPhases = (
-				6BCE1B45275FD607001AE7FD /* Sources */,
-				6BCE1B46275FD607001AE7FD /* Frameworks */,
-				6BCE1B47275FD607001AE7FD /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				6BCE1B4B275FD607001AE7FD /* PBXTargetDependency */,
-			);
-			name = FreeCornerUITests;
-			productName = FreeCornerUITests;
-			productReference = 6BCE1B49275FD607001AE7FD /* FreeCornerUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -344,10 +307,6 @@
 						CreatedOnToolsVersion = 13.1;
 					};
 					6BCE1B3E275FD607001AE7FD = {
-						CreatedOnToolsVersion = 13.1;
-						TestTargetID = 6BCE1B28275FD605001AE7FD;
-					};
-					6BCE1B48275FD607001AE7FD = {
 						CreatedOnToolsVersion = 13.1;
 						TestTargetID = 6BCE1B28275FD605001AE7FD;
 					};
@@ -368,7 +327,6 @@
 			targets = (
 				6BCE1B28275FD605001AE7FD /* FreeCorner */,
 				6BCE1B3E275FD607001AE7FD /* FreeCornerTests */,
-				6BCE1B48275FD607001AE7FD /* FreeCornerUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -381,20 +339,12 @@
 				6BCE1B39275FD607001AE7FD /* LaunchScreen.storyboard in Resources */,
 				6B6736BD276FBA6300B7BA38 /* GoogleService-Info.plist in Resources */,
 				6BCE1B36275FD607001AE7FD /* Assets.xcassets in Resources */,
-				6B83B2BB27C392ED007D2A32 /* FreeCornerUITests in Resources */,
 				6BDA544D2777EBB8001C90E2 /* PhotosListCollectionViewCell.xib in Resources */,
 				6BCE1B34275FD605001AE7FD /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		6BCE1B3D275FD607001AE7FD /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		6BCE1B47275FD607001AE7FD /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -541,13 +491,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		6BCE1B45275FD607001AE7FD /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -555,11 +498,6 @@
 			isa = PBXTargetDependency;
 			target = 6BCE1B28275FD605001AE7FD /* FreeCorner */;
 			targetProxy = 6BCE1B40275FD607001AE7FD /* PBXContainerItemProxy */;
-		};
-		6BCE1B4B275FD607001AE7FD /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 6BCE1B28275FD605001AE7FD /* FreeCorner */;
-			targetProxy = 6BCE1B4A275FD607001AE7FD /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -809,54 +747,6 @@
 			};
 			name = Release;
 		};
-		6BCE1B5A275FD607001AE7FD /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 9S2GW6G25E;
-				GENERATE_INFOPLIST_FILE = YES;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.simondahan.FreeCornerUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = FreeCorner;
-			};
-			name = Debug;
-		};
-		6BCE1B5B275FD607001AE7FD /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 9S2GW6G25E;
-				GENERATE_INFOPLIST_FILE = YES;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.simondahan.FreeCornerUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = FreeCorner;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -883,15 +773,6 @@
 			buildConfigurations = (
 				6BCE1B57275FD607001AE7FD /* Debug */,
 				6BCE1B58275FD607001AE7FD /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		6BCE1B59275FD607001AE7FD /* Build configuration list for PBXNativeTarget "FreeCornerUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				6BCE1B5A275FD607001AE7FD /* Debug */,
-				6BCE1B5B275FD607001AE7FD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
