@@ -13,7 +13,7 @@ class FreeCornerTests: XCTestCase {
 
     func testCreateOffer() {
         
-        let user = User(name: "test", phone: "test", offer: [:], address: [:], email: "test@mail.com")
+        let user = User(name: "test", phone: "test", offer: [:], address: [:], email: "test@mail.com", key: "1")
         let offer = Offer(name: "Create Offer Test", description: "Create Offer Test", images: ["example.com"], owner: user.name, category: "Smartphone", key: "1")
         var expectedOffer: [String: Offer] = [:]
         var expectedUser: [String: User] = [:]
@@ -54,5 +54,25 @@ class FreeCornerTests: XCTestCase {
         XCTAssertEqual(expectedUser, responseUser)
         XCTAssertEqual(filteredOffer.count, 1)
         XCTAssertEqual(filteredOffer.first?.value.category, "Smartphone")
+    }
+    
+    func testUserEquatableProtocol() {
+        let user1 = User(name: "John Doe", phone: "0123456789", offer: [:], address: [:], email: "test@mail.com")
+        let user2 = user1
+        
+        XCTAssertTrue(user1 == user2)
+        
+        let user3 = User(name: "Jane Doe", phone: "0123456789", offer: [:], address: [:], email: "test@mail.com")
+        XCTAssertFalse(user1 == user3)
+    }
+    
+    func testOfferEquatableProtocol() {
+        let offer1 = Offer(name: "offer", description: "test", images: [], owner: "user", category: "cat", key: "a")
+        let offer2 = offer1
+        
+        XCTAssertTrue(offer1 == offer2)
+        
+        let offer3 = Offer(name: "Different Offer", description: "test", images: [], owner: "user", category: "cat", key: "a")
+        XCTAssertFalse(offer1 == offer3)
     }
 }

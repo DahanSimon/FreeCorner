@@ -113,18 +113,16 @@ class PostOfferViewController: UIViewController {
     }
     
     // MARK: Methods
-    func sendData(image: UIImage, index: Int) {
+    private func sendData(image: UIImage, index: Int) {
         guard let imageData = image.pngData() else {
             return
         }
         storage.child("images/\(self.offers.count)/image\(index).png").putData(imageData, metadata: nil) { _, error in
             guard error == nil else {
-                print("error")
                 return
             }
             self.storage.child("images/\(self.offers.count)/image\(index).png").downloadURL { url, error in
                 guard let url = url, error == nil else {
-                    print("error")
                     return
                 }
                 let string = url.absoluteString
@@ -139,7 +137,7 @@ class PostOfferViewController: UIViewController {
         nameTextField.resignFirstResponder()
         descriptionTextField.resignFirstResponder()
     }
-    func getAssetThumbnail(asset: PHAsset, size: CGFloat) -> UIImage {
+    private func getAssetThumbnail(asset: PHAsset, size: CGFloat) -> UIImage {
         let retinaScale            = UIScreen.main.scale
         let retinaSquare           = CGSize(width: size * retinaScale, height: size * retinaScale)
         let cropSizeLength         = min(asset.pixelWidth, asset.pixelHeight)
@@ -162,19 +160,16 @@ class PostOfferViewController: UIViewController {
         })
         return thumbnail
     }
-    func showAlert(title: String!, message: String!) -> UIAlertController {
+    private func showAlert(title: String!, message: String!) -> UIAlertController {
         let alertController: UIAlertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let okAction: UIAlertAction = UIAlertAction(title: "Ok", style: .default) { (_) in
-            print("User pressed ok function")
-            
-        }
+        let okAction: UIAlertAction = UIAlertAction(title: "Ok", style: .default) { (_) in}
         alertController.addAction(okAction)
         alertController.popoverPresentationController?.sourceView = view
         alertController.popoverPresentationController?.sourceRect = view.frame
         return alertController
     }
     
-    func reset() {
+    private func reset() {
         sendOfferButton.isHidden       = true
         self.nameTextField.text        = ""
         self.offerImages               = []
@@ -183,7 +178,7 @@ class PostOfferViewController: UIViewController {
         collectionView.reloadData()
     }
     
-    func getNewImageId() -> Int {
+    private func getNewImageId() -> Int {
         let ids = offers.keys
         var id: String = "0"
         for key in ids where key > id {

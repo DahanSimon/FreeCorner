@@ -27,13 +27,14 @@ class PhotosListCollectionViewCell: UICollectionViewCell {
             offerPicture.kf.indicatorType = .activity
             offerPicture.kf.setImage(with: url, placeholder: nil, options: nil)
         }
-        
     }
+    
     func showAddImageButton() {
         addImageButton.isHidden = false
         offerPicture.isHidden = true
         button.isHidden = true
     }
+    
     @IBAction func addImageButtonTapped(_ sender: Any) {
         if let _ = self.parentContainerViewController() as? PostOfferViewController {
             NotificationCenter.default.post(name: Notification.Name("addImagePostOffer"), object: index)

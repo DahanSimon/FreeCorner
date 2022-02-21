@@ -17,10 +17,10 @@ class OffersListViewController: UIViewController {
     
     // MARK: Variables
     var filteredOffers: [String: Offer] = [:]
-    var isFiltered: Bool               = false
-    var selectedOfferIndex: String     = "0"
-    var users: [String: User]  = [:]
-    var offers: [String: Offer] = [:]
+    var isFiltered: Bool                = false
+    var selectedOfferIndex: String      = "0"
+    var users: [String: User]           = [:]
+    var offers: [String: Offer]         = [:]
     var offersIds: [String] {
         var ids: [String] = []
         if isFiltered {
@@ -94,28 +94,26 @@ class OffersListViewController: UIViewController {
     // MARK: Methods
     private func presentAlert(title: String, message: String) {
         let alertVC = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
-        let action = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+        let action  = UIAlertAction(title: "OK", style: .cancel, handler: nil)
         alertVC.addAction(action)
         self.present(alertVC, animated: true, completion: nil)
     }
     
-    func setUpFilterMenu() {
+    private func setUpFilterMenu() {
         filterButton.showsMenuAsPrimaryAction = true
-        var actionArray: [UIAction] = []
+        var actionArray: [UIAction]           = []
         for category in Categories.allCases {
             let action = UIAction(title: category.rawValue, state: .off, handler: filterButtonTapped(_:))
             actionArray.append(action)
         }
         filterButton.menu = UIMenu(children: actionArray)
     }
-    func getSortedKeys(_ dict: [String: Offer]) -> [String] {
+    private func getSortedKeys(_ dict: [String: Offer]) -> [String] {
         let keys: [String] = dict.keys.sorted()
         return keys.reversed()
     }
-    func getOffersKeys() -> [String] {
+    private func getOffersKeys() -> [String] {
         if isFiltered {
-            let sortedOffers = filteredOffers.sorted { $0.key < $1.key }
-            print(sortedOffers)
             return getSortedKeys(filteredOffers)
         }
         return getSortedKeys(offers)
@@ -133,15 +131,15 @@ extension OffersListViewController: UITableViewDataSource, UITableViewDelegate {
         }
         let offersKeys                   = self.getOffersKeys()
         let offerId                      = offersKeys[indexPath.row]
-        guard let userId = self.offers[offerId]?.owner,
+        guard let userId          = self.offers[offerId]?.owner,
                 let ownerLocation = FireBaseService.shared.users[userId]?.address,
-                let ownerZipCode = ownerLocation["Postal Code"],
-                let name = self.offers[offerId]?.name,
-                let firstImage = self.offers[offerId]?.images[0],
-                let imageURL = URL(string: firstImage) else {
+                let ownerCity     = ownerLocation["City Name"],
+                let name          = self.offers[offerId]?.name,
+                let firstImage    = self.offers[offerId]?.images[0],
+                let imageURL      = URL(string: firstImage) else {
             return UITableViewCell()
         }
-        cell.configure(name: name, location: "Zipcode: \n" + ownerZipCode, imageUrl: imageURL)
+        cell.configure(name: name, location: "City: " + ownerCity, imageUrl: imageURL)
         return cell
     }
     

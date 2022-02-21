@@ -61,7 +61,8 @@ class OfferDetailsViewController: UIViewController {
     deinit {
         print("offer details deinited")
     }
-    func setUpMap() {
+    
+    private func setUpMap() {
         guard let selectedOffer = self.selectedOffer, let owner = users[selectedOffer.owner], let postalCode = owner.address["Postal Code"], let cityName = owner.address["City Name"] else {
             return
         }

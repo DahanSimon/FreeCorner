@@ -25,7 +25,6 @@ class SignInViewController: UIViewController {
         Auth.auth().signIn(withEmail: email, password: password) { _, error in
             if let error = error {
                 self.presentAlert(title: "error", message: error.localizedDescription)
-                print(error.localizedDescription)
                 return
             }
             self.dismiss(animated: true, completion: nil)

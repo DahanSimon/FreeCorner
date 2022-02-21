@@ -26,15 +26,15 @@ class UpdateOfferViewController: UIViewController, UIImagePickerControllerDelega
     @IBOutlet weak var updateButton: UIButton!
     
     // MARK: Variables
-    let storage     = Storage.storage().reference()
-    let offerRef    = Database.database().reference(withPath: "offers")
-    let userRef     = Database.database().reference(withPath: "users")
-    let userId      = Auth.auth().currentUser?.uid
+    let storage                 = Storage.storage().reference()
+    let offerRef                = Database.database().reference(withPath: "offers")
+    let userRef                 = Database.database().reference(withPath: "users")
+    let userId                  = Auth.auth().currentUser?.uid
+    var offers: [String: Offer] = FireBaseService.shared.offers
     weak var updateOfferDelegate: UpdateOfferDelegate!
     var selectedOfferIndex: String?
     weak var selectedOffer: Offer?
     var usersOffersIds: [String]?
-    var offers: [String: Offer] = FireBaseService.shared.offers
     
     // MARK: Overrides
     override func viewDidLoad() {
@@ -45,10 +45,10 @@ class UpdateOfferViewController: UIViewController, UIImagePickerControllerDelega
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        selectedOffer = offers[selectedOfferIndex!]
-        collectionView.register(PhotosListCollectionViewCell.nib(), forCellWithReuseIdentifier: "PhotosListCollectionViewCell")
-        nameTextField.text = selectedOffer?.name
+        selectedOffer             = offers[selectedOfferIndex!]
+        nameTextField.text        = selectedOffer?.name
         descriptionTextField.text = selectedOffer?.desctiption
+        collectionView.register(PhotosListCollectionViewCell.nib(), forCellWithReuseIdentifier: "PhotosListCollectionViewCell")
         self.collectionView.reloadData()
     }
     
@@ -80,9 +80,9 @@ class UpdateOfferViewController: UIViewController, UIImagePickerControllerDelega
     }
     @objc func addImageNotificationReceived() {
         if self.isViewLoaded {
-            let picker = UIImagePickerController()
+            let picker               = UIImagePickerController()
                 picker.allowsEditing = true
-                picker.delegate = self
+                picker.delegate      = self
                 present(picker, animated: true)
         }
         
@@ -99,12 +99,10 @@ class UpdateOfferViewController: UIViewController, UIImagePickerControllerDelega
         }
         storage.child("images/\(offer.key)/image\(offer.images.count).png").putData(imageData, metadata: nil) { _, error in
             guard error == nil else {
-                print("error")
                 return
             }
             self.storage.child("images/\(offer.key)/image\(offer.images.count).png").downloadURL { url, error in
                 guard let url = url, error == nil else {
-                    print("error")
                     return
                 }
                 let string = url.absoluteString
@@ -149,8 +147,8 @@ extension UpdateOfferViewController: UIPickerViewDelegate, UIPickerViewDataSourc
         return Categories.allCases.count - 1
     }
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        let categories = Categories.allCases
-        var categoriesToShow: [String] = []
+        let categories                  = Categories.allCases
+        var categoriesToShow: [String]  = []
         for category in categories where category != .all {
             categoriesToShow.append(category.rawValue)
         }

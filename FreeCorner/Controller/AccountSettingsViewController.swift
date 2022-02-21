@@ -23,23 +23,23 @@ class AccountSettingsViewController: UIViewController {
     // MARK: Variables
     let userRef = Database.database().reference(withPath: "users")
     var userId: String?
-    
+    var user: User? 
     // MARK: Overrides
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         if let id = Auth.auth().currentUser?.uid, let user = FireBaseService.shared.users[id] {
-            self.userId = id
-            let fullName = user.name.components(separatedBy: " ")
-            let adress = user.address["Road Name"]?.components(separatedBy: " ")
-            self.nameTextField.text = fullName[0]
-            self.lastNameTextField.text = fullName[1]
-            self.emailTextField.text = user.email
-            self.phoneNumberTextField.text = user.phone
+            self.userId                     = id
+            self.user                       = user
+            let fullName                    = user.name.components(separatedBy: " ")
+            let adress                      = user.address["Road Name"]?.components(separatedBy: " ")
+            self.nameTextField.text         = fullName[0]
+            self.lastNameTextField.text     = fullName[1]
+            self.emailTextField.text        = user.email
+            self.phoneNumberTextField.text  = user.phone
             self.streetNumberTextField.text = adress![0]
-            self.streetNameTextField.text = adress?.dropFirst().joined(separator: " ")
-            self.zipCodeTextField.text = user.address["Postal Code"]
-            self.cityNameTextField.text = user.address["City Name"]
+            self.streetNameTextField.text   = adress?.dropFirst().joined(separator: " ")
+            self.zipCodeTextField.text      = user.address["Postal Code"]
+            self.cityNameTextField.text     = user.address["City Name"]
         }
     }
     
@@ -55,15 +55,15 @@ class AccountSettingsViewController: UIViewController {
         cityNameTextField.resignFirstResponder()
     }
     @IBAction func updateButtonTapped(_ sender: Any) {
-        guard let email = emailTextField.text,
-              let firstName = nameTextField.text,
-              let lastName = lastNameTextField.text,
-              let phoneNumber = phoneNumberTextField.text,
-              let streetNumber = streetNumberTextField.text,
-              let streetName = streetNameTextField.text,
-              let zipCode = zipCodeTextField.text,
-              let cityName = cityNameTextField.text,
-              let id = userId else {
+        guard let email         = emailTextField.text,
+              let firstName     = nameTextField.text,
+              let lastName      = lastNameTextField.text,
+              let phoneNumber   = phoneNumberTextField.text,
+              let streetNumber  = streetNumberTextField.text,
+              let streetName    = streetNameTextField.text,
+              let zipCode       = zipCodeTextField.text,
+              let cityName      = cityNameTextField.text,
+              let id            = userId else {
             presentAlert(title: "Oups", message: "Something is wrong with your entries !")
             return
         }
@@ -71,7 +71,7 @@ class AccountSettingsViewController: UIViewController {
                                             name: firstName + " " + lastName,
                                             phone: phoneNumber,
                                             address: ["Road Name": streetNumber + " " + streetName, "Postal Code": zipCode, "City Name": cityName],
-                                            offer: nil,
+                                            offer: user?.offers,
                                             email: email)
         self.presentAlert(title: "Done", message: "Account Updated !")
     }

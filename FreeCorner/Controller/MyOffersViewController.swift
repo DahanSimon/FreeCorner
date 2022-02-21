@@ -34,8 +34,7 @@ class MyOffersViewController: UIViewController, UpdateOfferDelegate {
             self.tableView.reloadData()
             for id in self.usersOffersIds {
                 let ref = self.offerRef.child(id)
-                ref.getData { error, snapshot in
-                    print(error.debugDescription)
+                ref.getData { _, snapshot in
                     var newItems: [String: Offer] = [:]
                     for child in snapshot.children {
                         if
