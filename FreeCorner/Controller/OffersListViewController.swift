@@ -100,13 +100,17 @@ class OffersListViewController: UIViewController {
     }
     
     private func setUpFilterMenu() {
-        filterButton.showsMenuAsPrimaryAction = true
-        var actionArray: [UIAction]           = []
-        for category in Categories.allCases {
-            let action = UIAction(title: category.rawValue, state: .off, handler: filterButtonTapped(_:))
-            actionArray.append(action)
+        if #available(iOS 14.0, *) {
+            filterButton.showsMenuAsPrimaryAction = true
+            var actionArray: [UIAction]           = []
+            for category in Categories.allCases {
+                let action = UIAction(title: category.rawValue, state: .off, handler: filterButtonTapped(_:))
+                actionArray.append(action)
+            }
+            filterButton.menu = UIMenu(children: actionArray)
+        } else {
+            filterButton.isHidden = true
         }
-        filterButton.menu = UIMenu(children: actionArray)
     }
     private func getSortedKeys(_ dict: [String: Offer]) -> [String] {
         let keys: [String] = dict.keys.sorted()

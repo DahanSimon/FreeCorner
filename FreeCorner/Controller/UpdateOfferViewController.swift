@@ -33,7 +33,7 @@ class UpdateOfferViewController: UIViewController, UIImagePickerControllerDelega
     var offers: [String: Offer] = FireBaseService.shared.offers
     weak var updateOfferDelegate: UpdateOfferDelegate!
     var selectedOfferIndex: String?
-    weak var selectedOffer: Offer?
+    var selectedOffer: Offer?
     var usersOffersIds: [String]?
     
     // MARK: Overrides

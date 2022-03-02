@@ -104,7 +104,7 @@ class PostOfferViewController: UIViewController {
             return
         }
         
-        var offers: [String: String] = users[userId!]?.offers ?? [:]
+        var offers: [String: String] = users[user]?.offers ?? [:]
         offers[offerId] = name
         self.usersRef.child("\(user)/offers").setValue(offers)
         let category = Categories.allCases[categoryPickerView.selectedRow(inComponent: 0)]

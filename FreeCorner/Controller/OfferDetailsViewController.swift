@@ -15,6 +15,7 @@ class OfferDetailsViewController: UIViewController {
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var collectionView: UICollectionView!
+    @IBOutlet weak var offerTitle: UILabel!
     
     // MARK: Variables
     var selectedOffer: Offer?
@@ -24,6 +25,7 @@ class OfferDetailsViewController: UIViewController {
     // MARK: Overrides
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.offerTitle.text = selectedOffer?.name
         self.descriptionLabel.text = selectedOffer?.desctiption
         setUpMap()
     }

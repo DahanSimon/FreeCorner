@@ -9,12 +9,23 @@ import Foundation
 @testable import FreeCorner
 
 class MockFireBaseService: FireBaseServiceProtocol {
+    func populateOffer(id: String, name: String, description: String, images: [String], owner: String, category: String) {
+        <#code#>
+    }
+    
+    func populateUser(id: String, name: String, phone: String, address: [String : String], offer: [String : String]?, email: String) {
+        <#code#>
+    }
+    
+    func deleteImage(offersId: String, imageId: String) {
+        <#code#>
+    }
+    
     
     var offers: [String: Offer] = [:]
     var users: [String: User] = [:]
     var expectedOffersResult: [String: Offer] = [:]
     var expectedUsersResult: [String: User] = [:]
-//    static var shared = MockFireBaseService()
     private init() {}
     init(expectedOffers: [String: Offer], expectedUsers: [String: User]) {
         self.expectedOffersResult = expectedOffers
