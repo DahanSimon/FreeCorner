@@ -31,6 +31,19 @@ class FreeCornerTests: XCTestCase {
         XCTAssertEqual(expectedOffer, responseOffer)
         XCTAssertEqual(expectedUser, responseUser)
     }
+    func testPopulateUser() {
+        let mock = MockFireBaseService(expectedOffers: [:], expectedUsers: [:])
+        let user = User(name: "Simon Dahan", phone: "0659272810", offer: [:], address: [:], email: "test@mail.com")
+        mock.populateUser(id: "abc", name: "Simon Dahan", phone: "0659272810", address: [:], offer: [:], email: "test@mail.com")
+        XCTAssertEqual(mock.users["abc"], user)
+    }
+    
+    func testPopulateOffer() {
+        let mock = MockFireBaseService(expectedOffers: [:], expectedUsers: [:])
+        let offer = Offer(name: "test", description: "test", images: [], owner: "test", category: "test", key: "test")
+        mock.populateOffer(id: "test", name: "test", description: "test", images: [], owner: "test", category: "test")
+        XCTAssertEqual(mock.offers["test"], offer)
+    }
     func testFilterOffersByCategory() {
         let user = User(name: "test", phone: "test", offer: [:], address: [:], email: "test@mail.com")
         let offer = Offer(name: "Create Offer Test", description: "Create Offer Test", images: ["example.com"], owner: user.name, category: "Smartphone", key: "1")
