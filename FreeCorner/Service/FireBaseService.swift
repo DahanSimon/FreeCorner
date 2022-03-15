@@ -17,7 +17,19 @@ class FireBaseService: FireBaseServiceProtocol {
     var offers: [String: Offer] = [:]
     var users: [String: User] = [:]
     private init() {}
-    
+    let connectedRef = Database.database().reference(withPath: ".info/connected")
+    var isConnceted: Bool = false
+    func testConnection(callback: @escaping (Bool) -> Void) {
+        connectedRef.observe(.value, with: { snapshot in
+            if let connected = snapshot.value as? Bool, connected {
+                self.isConnceted = true
+                callback(true)
+            } else {
+                self.isConnceted = false
+                callback(false)
+            }
+        })
+    }
     // This method updates the offers dictionnary by observing chnages on firebase realtime database
     func getOffers(callback: @escaping ([String: Offer], Bool) -> Void) {
         offersRef.observe(.value, with: { snapshot in

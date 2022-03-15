@@ -24,6 +24,11 @@ class MyOffersViewController: UIViewController, UpdateOfferDelegate {
     // MARK: Overrides
     override func viewDidLoad() {
         super.viewDidLoad()
+        FireBaseService.shared.testConnection { isConnected in
+            if !isConnected {
+                self.presentAlert(title: "No Connection", message: "Please come back whe you will have \n a good network connection.")
+            }
+        }
         self.tableView.rowHeight = 70
         
         offerRef.observe(.childChanged) { _ in
@@ -66,6 +71,13 @@ class MyOffersViewController: UIViewController, UpdateOfferDelegate {
         tableView.reloadData()
     }
     
+    private func presentAlert(title: String, message: String) {
+        let alertVC = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let action = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+        alertVC.addAction(action)
+        self.present(alertVC, animated: true, completion: nil)
+    }
+    
     deinit {
         print("my offers deinited")
     }
@@ -95,6 +107,7 @@ extension MyOffersViewController: UITableViewDelegate, UITableViewDataSource {
                 self.usersOffersIds.remove(at: indexPath.row)
                 offerRef.child(offersId).removeValue()
                 userRef.child(userId).child("offers").child(offersId).removeValue()
+                StorageService().deleteImages(offerId: offersId)
                 tableView.deleteRows(at: [indexPath], with: .fade)
             }
         }

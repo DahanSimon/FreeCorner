@@ -25,7 +25,6 @@ class PostOfferViewController: UIViewController {
     let offersRef                       = Database.database().reference(withPath: "offers")
     let usersRef                        = Database.database().reference(withPath: "users")
     var refObservers: [DatabaseHandle]  = []
-    let storage                         = Storage.storage().reference()
     var offerImages: [UIImage]          = []
     var imagesUrl: [String]             = []
     var offerName: String?
@@ -37,7 +36,7 @@ class PostOfferViewController: UIViewController {
     var users: [String: User] {
         return FireBaseService.shared.users
     }
-    let offerId = UUID().uuidString
+    var offerId = UUID().uuidString
     
     // MARK: Outlets
     @IBOutlet weak var collectionView: UICollectionView!
@@ -45,17 +44,21 @@ class PostOfferViewController: UIViewController {
     @IBOutlet weak var sendOfferButton: UIButton!
     @IBOutlet weak var descriptionTextField: UITextField!
     @IBOutlet weak var categoryPickerView: UIPickerView!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     // MARK: Overrides
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         self.sendOfferButton.isHidden = true
     }
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let controller = segue.destination as? SignUpViewController {
-            controller.completionHandler = {
+            controller.completionHandler = { [self] in
                 self.dismiss(animated: true, completion: nil)
+                if Auth.auth().currentUser == nil {
+                    presentAlert(title: "You are not logged in", message: "Please create an account or log in \nto publish an offer.")
+                    tabBarController?.selectedIndex = 0
+                }
             }
         }
     }
@@ -67,6 +70,13 @@ class PostOfferViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
+        FireBaseService.shared.testConnection { isConnected in
+            if !isConnected {
+                self.presentAlert(title: "No Connection", message: "Please come back whe you will have \n a good network connection.")
+            }
+        }
+        activityIndicator.isHidden = true
+        offerId = UUID().uuidString
         NotificationCenter.default.addObserver(self, selector: #selector(addImageNotificationReceived), name: Notification.Name("addImagePostOffer"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(notificationReceived(_:)), name: Notification.Name("deletedImagePostOffer"), object: nil)
         collectionView.register(PhotosListCollectionViewCell.nib(), forCellWithReuseIdentifier: "PhotosListCollectionViewCell")
@@ -76,25 +86,24 @@ class PostOfferViewController: UIViewController {
         guard let index = notification.object as? Int else {
             return
         }
-        imagesUrl.remove(at: index)
+        offerImages.remove(at: index)
         collectionView.reloadData()
-        if imagesUrl.isEmpty {
+        if offerImages.isEmpty {
             sendOfferButton.isHidden = true
         }
     }
     @objc func addImageNotificationReceived() {
         if self.isViewLoaded {
             let picker              = OpalImagePickerController()
-            let previousImagesCount = offerImages.count
             presentOpalImagePickerController(picker, animated: true) { assets in
                 picker.dismiss(animated: true) {
                     for asset in assets {
                         self.offerImages.append(self.getAssetThumbnail(asset: asset, size: 4000))
                     }
-                    for i in previousImagesCount..<self.offerImages.count {
-                        self.sendData(image: self.offerImages[i], index: i)
+                    self.collectionView.reloadData()
+                    if FireBaseService.shared.isConnceted {
+                        self.sendOfferButton.isHidden = false
                     }
-                    self.sendOfferButton.isHidden = true
                 }
             } cancel: { }
         }
@@ -103,32 +112,17 @@ class PostOfferViewController: UIViewController {
         guard let user = Auth.auth().currentUser?.uid, let name = nameTextField.text, let description = descriptionTextField.text else {
             return
         }
-        
+        sendOfferButton.isHidden = true
+        activityIndicator.isHidden = false
         var offers: [String: String] = users[user]?.offers ?? [:]
         offers[offerId] = name
-        self.usersRef.child("\(user)/offers").setValue(offers)
         let category = Categories.allCases[categoryPickerView.selectedRow(inComponent: 0)]
-        FireBaseService.shared.populateOffer(id: offerId, name: name, description: description, images: imagesUrl, owner: user, category: category.rawValue)
-        reset()
-    }
-    
-    // MARK: Methods
-    private func sendData(image: UIImage, index: Int) {
-        guard let imageData = image.pngData() else {
-            return
-        }
-        storage.child("images/\(self.offers.count)/image\(index).png").putData(imageData, metadata: nil) { _, error in
-            guard error == nil else {
-                return
-            }
-            self.storage.child("images/\(self.offers.count)/image\(index).png").downloadURL { url, error in
-                guard let url = url, error == nil else {
-                    return
-                }
-                let string = url.absoluteString
-                self.imagesUrl.append(string)
-                self.sendOfferButton.isHidden = false
-                self.collectionView.reloadData()
+        self.sendData(images: self.offerImages) { urlArray in
+            if let imagesUrl = urlArray {
+                FireBaseService.shared.populateOffer(id: self.offerId, name: name, description: description, images: imagesUrl, owner: user, category: category.rawValue)
+                self.usersRef.child("\(user)/offers").setValue(offers)
+                self.performSegue(withIdentifier: "postSuccess", sender: nil)
+                self.reset()
             }
         }
     }
@@ -137,6 +131,45 @@ class PostOfferViewController: UIViewController {
         nameTextField.resignFirstResponder()
         descriptionTextField.resignFirstResponder()
     }
+    // MARK: Methods
+    private func sendData(images: [UIImage], callback: @escaping ([String]?) -> Void) {
+        var index = 0
+        var urlArray: [String] = []
+        let dispatchGroup = DispatchGroup()
+        for image in images {
+            dispatchGroup.enter()
+            if let imageData =  image.pngData() {
+                StorageService().saveImage(imageData: imageData, offerId: self.offerId, index: index) { [self] success, url in
+                    guard let url = url else {
+                        presentAlert(title: "Oups", message: "Something went wrong please try again later")
+                        callback(nil)
+                        return
+                    }
+                    if success {
+                        let string = url.absoluteString
+                        urlArray.append(string)
+                        
+                    } else {
+                        presentAlert(title: "Oups", message: "Something went wrong please try again later")
+                        callback(nil)
+                    }
+                    
+                    dispatchGroup.leave()
+                }
+            }
+            index += 1
+        }
+        dispatchGroup.notify(queue: .main) {
+            callback(urlArray)
+        }
+    }
+    private func presentAlert(title: String, message: String) {
+        let alertVC = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        let action  = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+        alertVC.addAction(action)
+        self.present(alertVC, animated: true, completion: nil)
+    }
+    
     private func getAssetThumbnail(asset: PHAsset, size: CGFloat) -> UIImage {
         let retinaScale            = UIScreen.main.scale
         let retinaSquare           = CGSize(width: size * retinaScale, height: size * retinaScale)
@@ -160,14 +193,6 @@ class PostOfferViewController: UIViewController {
         })
         return thumbnail
     }
-    private func showAlert(title: String!, message: String!) -> UIAlertController {
-        let alertController: UIAlertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let okAction: UIAlertAction = UIAlertAction(title: "Ok", style: .default) { (_) in}
-        alertController.addAction(okAction)
-        alertController.popoverPresentationController?.sourceView = view
-        alertController.popoverPresentationController?.sourceRect = view.frame
-        return alertController
-    }
     
     private func reset() {
         sendOfferButton.isHidden       = true
@@ -176,6 +201,7 @@ class PostOfferViewController: UIViewController {
         self.imagesUrl                 = []
         self.descriptionTextField.text = ""
         collectionView.reloadData()
+        activityIndicator.isHidden = true
     }
     
     private func getNewImageId() -> Int {
@@ -212,15 +238,16 @@ extension PostOfferViewController: UIPickerViewDelegate, UIPickerViewDataSource 
 
 extension PostOfferViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return (imagesUrl.count + 1)
+        //        return (imagesUrl.count + 1)
+        return offerImages.count + 1
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotosListCollectionViewCell", for: indexPath) as? PhotosListCollectionViewCell else {
             return UICollectionViewCell()
         }
-        if imagesUrl.count > indexPath.row {
-            cell.configure(imageUrl: imagesUrl[indexPath.row], index: indexPath.row, offersId: offerId)
+        if offerImages.count > indexPath.row {
+            cell.configure(image: offerImages[indexPath.row], imageUrl: nil, index: indexPath.row, offersId: offerId)
         } else {
             cell.showAddImageButton()
         }

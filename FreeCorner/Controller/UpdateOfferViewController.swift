@@ -45,6 +45,11 @@ class UpdateOfferViewController: UIViewController, UIImagePickerControllerDelega
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        FireBaseService.shared.testConnection { isConnected in
+            if !isConnected {
+                self.presentAlert(title: "No Connection", message: "Please come back whe you will have \n a good network connection.")
+            }
+        }
         selectedOffer             = offers[selectedOfferIndex!]
         nameTextField.text        = selectedOffer?.name
         descriptionTextField.text = selectedOffer?.desctiption
@@ -68,8 +73,7 @@ class UpdateOfferViewController: UIViewController, UIImagePickerControllerDelega
                                            images: selectedOffer.images,
                                            owner: userId!,
                                            category: Categories.allCases[categoryPickerView.selectedRow(inComponent: 0)].rawValue)
-        
-        self.dismiss(animated: true, completion: nil)
+        presentAlert(title: "Offer Updated !", message: "Done !")
     }
     @objc func notificationReceived(_ notification: NSNotification) {
         guard let index = notification.object as? Int else {
@@ -97,20 +101,25 @@ class UpdateOfferViewController: UIViewController, UIImagePickerControllerDelega
         guard let imageData = image.pngData(), let offer = self.selectedOffer else {
             return
         }
-        storage.child("images/\(offer.key)/image\(offer.images.count).png").putData(imageData, metadata: nil) { _, error in
-            guard error == nil else {
+        StorageService().saveImage(imageData: imageData, offerId: offer.key, index: offer.images.count) { success, url in
+            guard let url = url else {
                 return
             }
-            self.storage.child("images/\(offer.key)/image\(offer.images.count).png").downloadURL { url, error in
-                guard let url = url, error == nil else {
-                    return
-                }
+            if success {
                 let string = url.absoluteString
                 FireBaseService.shared.offers[self.selectedOffer!.key]?.images.append(string)
+                self.selectedOffer?.images.append(string)
                 self.collectionView.reloadData()
                 self.updateButton.isHidden = false
             }
         }
+    }
+    
+    private func presentAlert(title: String, message: String) {
+        let alertVC = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let action  = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+        alertVC.addAction(action)
+        self.present(alertVC, animated: true, completion: nil)
     }
     deinit {
         print("update offer deinited")
@@ -130,7 +139,7 @@ extension UpdateOfferViewController: UICollectionViewDelegate, UICollectionViewD
             return UICollectionViewCell()
         }
         if selectedOffer.images.count > indexPath.row {
-            cell.configure(imageUrl: selectedOffer.images[indexPath.row], index: indexPath.row, offersId: selectedOffer.key)
+            cell.configure(image: nil, imageUrl: selectedOffer.images[indexPath.row], index: indexPath.row, offersId: selectedOffer.key)
         } else {
             cell.showAddImageButton()
         }

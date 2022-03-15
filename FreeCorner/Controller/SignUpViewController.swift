@@ -32,7 +32,7 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
     override func viewWillAppear(_ animated: Bool) {
         if Auth.auth().currentUser != nil {
             self.completionHandler?()
-        }
+        } 
     }
     
     // MARK: Actions
@@ -97,6 +97,6 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
         self.present(alertVC, animated: true, completion: nil)
     }
     deinit {
-        print("sign up deinited")
+        self.completionHandler?()
     }
 }

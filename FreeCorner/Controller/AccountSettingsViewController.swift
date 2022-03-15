@@ -42,7 +42,13 @@ class AccountSettingsViewController: UIViewController {
             self.cityNameTextField.text     = user.address["City Name"]
         }
     }
-    
+    override func viewWillAppear(_ animated: Bool) {
+        FireBaseService.shared.testConnection { isConnected in
+            if !isConnected {
+                self.presentAlert(title: "No Connection", message: "Please come back whe you will have \n a good network connection.")
+            }
+        }
+    }
     // MARK: Actions
     @IBAction func hideKeyboard(_ sender: UITapGestureRecognizer) {
         nameTextField.resignFirstResponder()

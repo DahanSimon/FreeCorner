@@ -15,7 +15,21 @@ class PhotosListCollectionViewCell: UICollectionViewCell {
     var index: Int = 0
     var offersId: String = ""
     
-    func configure(imageUrl: String, index: Int, offersId: String) {
+//    func configure(imageUrl: String, index: Int, offersId: String) {
+//        self.index = index
+//        self.offersId = offersId
+//        addImageButton.isHidden = true
+//        offerPicture.isHidden = false
+//        button.isHidden = false
+//        activityIndicator.frame = self.offerPicture.bounds
+//        offerPicture.addSubview(activityIndicator)
+//        if let url = URL(string: imageUrl) {
+//            offerPicture.kf.indicatorType = .activity
+//            offerPicture.kf.setImage(with: url, placeholder: nil, options: nil)
+//        }
+//    }
+    
+    func configure(image: UIImage?,imageUrl: String? , index: Int, offersId: String) {
         self.index = index
         self.offersId = offersId
         addImageButton.isHidden = true
@@ -23,9 +37,12 @@ class PhotosListCollectionViewCell: UICollectionViewCell {
         button.isHidden = false
         activityIndicator.frame = self.offerPicture.bounds
         offerPicture.addSubview(activityIndicator)
-        if let url = URL(string: imageUrl) {
+        if let imageUrl = imageUrl, let url = URL(string: imageUrl) {
             offerPicture.kf.indicatorType = .activity
             offerPicture.kf.setImage(with: url, placeholder: nil, options: nil)
+        }
+        if let image = image {
+            offerPicture.image = image
         }
     }
     

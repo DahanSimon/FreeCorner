@@ -8,6 +8,7 @@
 import UIKit
 import FirebaseDatabase
 import FirebaseAuth
+
 class OffersListViewController: UIViewController {
     
     // MARK: Outlets
@@ -37,6 +38,7 @@ class OffersListViewController: UIViewController {
     
     // MARK: Overrides
     override func viewDidLoad() {
+        
         super.viewDidLoad()
         setUpFilterMenu()
         tableView.rowHeight = 400
@@ -58,16 +60,25 @@ class OffersListViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
+        FireBaseService.shared.testConnection { isConnected in
+            if !isConnected {
+                self.presentAlert(title: "No Connection", message: "Please come back whe you will have \n a good network connection.")
+            }
+        }
         FireBaseService.shared.getOffers { offers, success in
             if success {
                 self.offers = offers
                 self.tableView.reloadData()
+            } else {
+                self.presentAlert(title: "Oups", message: "Something went wrong please try again later")
             }
         }
         FireBaseService.shared.getUsers {users, success in
             if success {
                 self.users = users
                 self.tableView.reloadData()
+            } else {
+                self.presentAlert(title: "Oups", message: "Something went wrong please try again later")
             }
         }
     }
@@ -93,7 +104,7 @@ class OffersListViewController: UIViewController {
     
     // MARK: Methods
     private func presentAlert(title: String, message: String) {
-        let alertVC = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        let alertVC = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let action  = UIAlertAction(title: "OK", style: .cancel, handler: nil)
         alertVC.addAction(action)
         self.present(alertVC, animated: true, completion: nil)
