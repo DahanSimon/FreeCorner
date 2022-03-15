@@ -62,7 +62,7 @@ class OffersListViewController: UIViewController {
         super.viewWillAppear(true)
         FireBaseService.shared.testConnection { isConnected in
             if !isConnected {
-                self.presentAlert(title: "No Connection", message: "Please come back whe you will have \n a good network connection.")
+                self.presentAlert(title: "No Connection", message: "Please come back when you will have \n a good network connection.")
             }
         }
         FireBaseService.shared.getOffers { offers, success in

@@ -31,8 +31,7 @@ class SettingsMenuViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let controller = segue.destination as? SignUpViewController {
             controller.completionHandler = {
-                self.isUserConnected()
-                
+//                self.isUserConnected()
             }
         }
     }
