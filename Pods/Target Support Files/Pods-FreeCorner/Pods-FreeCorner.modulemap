@@ -1,0 +1,6 @@
+framework module Pods_FreeCorner {
+  umbrella header "Pods-FreeCorner-umbrella.h"
+
+  export *
+  module * { export * }
+}
